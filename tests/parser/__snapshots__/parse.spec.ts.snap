@@ -1,0 +1,399 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parse parses query with operator precedence ""s0==v0,s1==v1;s2==v2,s3==v3"" 1`] = `
+Object {
+  "left": Object {
+    "left": Object {
+      "left": Object {
+        "selector": "s0",
+        "type": "SELECTOR",
+      },
+      "operator": "==",
+      "right": Object {
+        "type": "VALUE",
+        "value": "v0",
+      },
+      "type": "COMPARISION_EXPRESSION",
+    },
+    "operator": ",",
+    "right": Object {
+      "left": Object {
+        "left": Object {
+          "selector": "s1",
+          "type": "SELECTOR",
+        },
+        "operator": "==",
+        "right": Object {
+          "type": "VALUE",
+          "value": "v1",
+        },
+        "type": "COMPARISION_EXPRESSION",
+      },
+      "operator": ";",
+      "right": Object {
+        "left": Object {
+          "selector": "s2",
+          "type": "SELECTOR",
+        },
+        "operator": "==",
+        "right": Object {
+          "type": "VALUE",
+          "value": "v2",
+        },
+        "type": "COMPARISION_EXPRESSION",
+      },
+      "type": "LOGIC_EXPRESSION",
+    },
+    "type": "LOGIC_EXPRESSION",
+  },
+  "operator": ",",
+  "right": Object {
+    "left": Object {
+      "selector": "s3",
+      "type": "SELECTOR",
+    },
+    "operator": "==",
+    "right": Object {
+      "type": "VALUE",
+      "value": "v3",
+    },
+    "type": "COMPARISION_EXPRESSION",
+  },
+  "type": "LOGIC_EXPRESSION",
+}
+`;
+
+exports[`parse parses query with operator precedence ""s0==v0,s1=out=(v10,v11),s2==v2"" 1`] = `
+Object {
+  "left": Object {
+    "left": Object {
+      "left": Object {
+        "selector": "s0",
+        "type": "SELECTOR",
+      },
+      "operator": "==",
+      "right": Object {
+        "type": "VALUE",
+        "value": "v0",
+      },
+      "type": "COMPARISION_EXPRESSION",
+    },
+    "operator": ",",
+    "right": Object {
+      "left": Object {
+        "selector": "s1",
+        "type": "SELECTOR",
+      },
+      "operator": "=out=",
+      "right": Object {
+        "type": "VALUE",
+        "value": Array [
+          "v10",
+          "v11",
+        ],
+      },
+      "type": "COMPARISION_EXPRESSION",
+    },
+    "type": "LOGIC_EXPRESSION",
+  },
+  "operator": ",",
+  "right": Object {
+    "left": Object {
+      "selector": "s2",
+      "type": "SELECTOR",
+    },
+    "operator": "==",
+    "right": Object {
+      "type": "VALUE",
+      "value": "v2",
+    },
+    "type": "COMPARISION_EXPRESSION",
+  },
+  "type": "LOGIC_EXPRESSION",
+}
+`;
+
+exports[`parse parses query with operator precedence ""s0==v0;s1==v1;s2==v2"" 1`] = `
+Object {
+  "left": Object {
+    "left": Object {
+      "left": Object {
+        "selector": "s0",
+        "type": "SELECTOR",
+      },
+      "operator": "==",
+      "right": Object {
+        "type": "VALUE",
+        "value": "v0",
+      },
+      "type": "COMPARISION_EXPRESSION",
+    },
+    "operator": ";",
+    "right": Object {
+      "left": Object {
+        "selector": "s1",
+        "type": "SELECTOR",
+      },
+      "operator": "==",
+      "right": Object {
+        "type": "VALUE",
+        "value": "v1",
+      },
+      "type": "COMPARISION_EXPRESSION",
+    },
+    "type": "LOGIC_EXPRESSION",
+  },
+  "operator": ";",
+  "right": Object {
+    "left": Object {
+      "selector": "s2",
+      "type": "SELECTOR",
+    },
+    "operator": "==",
+    "right": Object {
+      "type": "VALUE",
+      "value": "v2",
+    },
+    "type": "COMPARISION_EXPRESSION",
+  },
+  "type": "LOGIC_EXPRESSION",
+}
+`;
+
+exports[`parse parses query with parenthesis ""((s0==a0));s1==a1"" 1`] = `
+Object {
+  "left": Object {
+    "left": Object {
+      "selector": "s0",
+      "type": "SELECTOR",
+    },
+    "operator": "==",
+    "right": Object {
+      "type": "VALUE",
+      "value": "a0",
+    },
+    "type": "COMPARISION_EXPRESSION",
+  },
+  "operator": ";",
+  "right": Object {
+    "left": Object {
+      "selector": "s1",
+      "type": "SELECTOR",
+    },
+    "operator": "==",
+    "right": Object {
+      "type": "VALUE",
+      "value": "a1",
+    },
+    "type": "COMPARISION_EXPRESSION",
+  },
+  "type": "LOGIC_EXPRESSION",
+}
+`;
+
+exports[`parse parses query with parenthesis ""((s0==a0,s1==a1);s2==a2,s3==a3);s4==a4"" 1`] = `
+Object {
+  "left": Object {
+    "left": Object {
+      "left": Object {
+        "left": Object {
+          "left": Object {
+            "selector": "s0",
+            "type": "SELECTOR",
+          },
+          "operator": "==",
+          "right": Object {
+            "type": "VALUE",
+            "value": "a0",
+          },
+          "type": "COMPARISION_EXPRESSION",
+        },
+        "operator": ",",
+        "right": Object {
+          "left": Object {
+            "selector": "s1",
+            "type": "SELECTOR",
+          },
+          "operator": "==",
+          "right": Object {
+            "type": "VALUE",
+            "value": "a1",
+          },
+          "type": "COMPARISION_EXPRESSION",
+        },
+        "type": "LOGIC_EXPRESSION",
+      },
+      "operator": ";",
+      "right": Object {
+        "left": Object {
+          "selector": "s2",
+          "type": "SELECTOR",
+        },
+        "operator": "==",
+        "right": Object {
+          "type": "VALUE",
+          "value": "a2",
+        },
+        "type": "COMPARISION_EXPRESSION",
+      },
+      "type": "LOGIC_EXPRESSION",
+    },
+    "operator": ",",
+    "right": Object {
+      "left": Object {
+        "selector": "s3",
+        "type": "SELECTOR",
+      },
+      "operator": "==",
+      "right": Object {
+        "type": "VALUE",
+        "value": "a3",
+      },
+      "type": "COMPARISION_EXPRESSION",
+    },
+    "type": "LOGIC_EXPRESSION",
+  },
+  "operator": ";",
+  "right": Object {
+    "left": Object {
+      "selector": "s4",
+      "type": "SELECTOR",
+    },
+    "operator": "==",
+    "right": Object {
+      "type": "VALUE",
+      "value": "a4",
+    },
+    "type": "COMPARISION_EXPRESSION",
+  },
+  "type": "LOGIC_EXPRESSION",
+}
+`;
+
+exports[`parse parses query with parenthesis ""(s0==a0)"" 1`] = `
+Object {
+  "left": Object {
+    "selector": "s0",
+    "type": "SELECTOR",
+  },
+  "operator": "==",
+  "right": Object {
+    "type": "VALUE",
+    "value": "a0",
+  },
+  "type": "COMPARISION_EXPRESSION",
+}
+`;
+
+exports[`parse parses query with parenthesis ""(s0==a0,s1==a1);s2==a2"" 1`] = `
+Object {
+  "left": Object {
+    "left": Object {
+      "left": Object {
+        "selector": "s0",
+        "type": "SELECTOR",
+      },
+      "operator": "==",
+      "right": Object {
+        "type": "VALUE",
+        "value": "a0",
+      },
+      "type": "COMPARISION_EXPRESSION",
+    },
+    "operator": ",",
+    "right": Object {
+      "left": Object {
+        "selector": "s1",
+        "type": "SELECTOR",
+      },
+      "operator": "==",
+      "right": Object {
+        "type": "VALUE",
+        "value": "a1",
+      },
+      "type": "COMPARISION_EXPRESSION",
+    },
+    "type": "LOGIC_EXPRESSION",
+  },
+  "operator": ";",
+  "right": Object {
+    "left": Object {
+      "selector": "s2",
+      "type": "SELECTOR",
+    },
+    "operator": "==",
+    "right": Object {
+      "type": "VALUE",
+      "value": "a2",
+    },
+    "type": "COMPARISION_EXPRESSION",
+  },
+  "type": "LOGIC_EXPRESSION",
+}
+`;
+
+exports[`parse parses query with parenthesis ""(s0==a0,s1=out=(a10,a11));s2==a2,s3==a3"" 1`] = `
+Object {
+  "left": Object {
+    "left": Object {
+      "left": Object {
+        "left": Object {
+          "selector": "s0",
+          "type": "SELECTOR",
+        },
+        "operator": "==",
+        "right": Object {
+          "type": "VALUE",
+          "value": "a0",
+        },
+        "type": "COMPARISION_EXPRESSION",
+      },
+      "operator": ",",
+      "right": Object {
+        "left": Object {
+          "selector": "s1",
+          "type": "SELECTOR",
+        },
+        "operator": "=out=",
+        "right": Object {
+          "type": "VALUE",
+          "value": Array [
+            "a10",
+            "a11",
+          ],
+        },
+        "type": "COMPARISION_EXPRESSION",
+      },
+      "type": "LOGIC_EXPRESSION",
+    },
+    "operator": ";",
+    "right": Object {
+      "left": Object {
+        "selector": "s2",
+        "type": "SELECTOR",
+      },
+      "operator": "==",
+      "right": Object {
+        "type": "VALUE",
+        "value": "a2",
+      },
+      "type": "COMPARISION_EXPRESSION",
+    },
+    "type": "LOGIC_EXPRESSION",
+  },
+  "operator": ",",
+  "right": Object {
+    "left": Object {
+      "selector": "s3",
+      "type": "SELECTOR",
+    },
+    "operator": "==",
+    "right": Object {
+      "type": "VALUE",
+      "value": "a3",
+    },
+    "type": "COMPARISION_EXPRESSION",
+  },
+  "type": "LOGIC_EXPRESSION",
+}
+`;

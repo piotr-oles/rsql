@@ -1,0 +1,82 @@
+{
+  "name": "rsql-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "RSQL compiler and parser for Node.js and Browsers",
+  "repository": "https://github.com/piotr-oles/rsql.git",
+  "license": "MIT",
+  "author": "Piotr Oleś <piotrek.oles@gmail.com>",
+  "engines": {
+    "node": ">= 8"
+  },
+  "scripts": {
+    "postinstall": "lerna bootstrap",
+    "clean": "lerna run --parallel clean",
+    "dev": "lerna run --parallel dev",
+    "build": "lerna run build",
+    "release": "auto shipit",
+    "precommit": "lint-staged && yarn build && yarn test",
+    "commit": "./node_modules/.bin/git-cz",
+    "lint": "yarn eslint . --ext .js,.jsx,.ts,.tsx",
+    "test": "jest",
+    "test:mutate": "stryker run"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && yarn build && yarn test",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,yml,json,md,html,ts}": "prettier --write"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "devDependencies": {
+    "@auto-it/conventional-commits": "^9.22.1",
+    "@auto-it/first-time-contributor": "^9.22.1",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@stryker-mutator/core": "^3.1.0",
+    "@stryker-mutator/jest-runner": "^3.1.0",
+    "@stryker-mutator/typescript": "^3.1.0",
+    "@types/jest": "^25.1.4",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
+    "auto": "^9.22.1",
+    "commitlint": "^8.3.5",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "git-cz": "^4.3.1",
+    "husky": "^4.2.3",
+    "jest": "^25.2.3",
+    "jest-haste-map": "^25.2.3",
+    "jest-resolve": "^25.2.3",
+    "lerna": "^3.20.2",
+    "lint-staged": "^10.0.9",
+    "prettier": "^2.0.2",
+    "ts-jest": "^25.2.1",
+    "typescript": "^3.8.3"
+  },
+  "auto": {
+    "plugins": [
+      "npm",
+      "conventional-commits",
+      "first-time-contributor",
+      "released"
+    ],
+    "onlyPublishWithReleaseLabel": true
+  },
+  "publishConfig": {
+    "registry": "https://localhost:4873/",
+    "access": "public"
+  }
+}

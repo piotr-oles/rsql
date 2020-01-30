@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig",
+  "include": [".", "../packages"],
+  "compilerOptions": {
+    "rootDir": "..",
+    "paths": {
+      "@rsql/*": ["packages/*/src"]
+    }
+  }
+}

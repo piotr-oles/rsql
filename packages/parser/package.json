@@ -1,0 +1,31 @@
+{
+  "name": "@rsql/parser",
+  "description": "RSQL parser",
+  "repository": "https://github.com/piotr-oles/rsql.git",
+  "license": "MIT",
+  "author": "Piotr Oleś <piotrek.oles@gmail.com>",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "clean": "rm -rf ./lib && rm -f tsconfig.tsbuildinfo",
+    "compile": "tsc -b tsconfig.json",
+    "dev": "yarn compile --watch --preserveWatchOutput",
+    "build": "yarn clean && yarn compile"
+  },
+  "engines": {
+    "node": ">= 8"
+  },
+  "dependencies": {
+    "@rsql/ast": "0.0.0",
+    "@rsql/definitions": "0.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  }
+}

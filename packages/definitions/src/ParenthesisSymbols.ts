@@ -1,0 +1,3 @@
+type ParenthesisSymbol = "(" | ")";
+
+export { ParenthesisSymbol };

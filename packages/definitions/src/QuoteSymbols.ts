@@ -1,0 +1,3 @@
+type QuoteSymbol = "'" | '"';
+
+export { QuoteSymbol };

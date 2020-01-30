@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "sourceRoot": "./src",
+    "baseUrl": "./src"
+  },
+  "exclude": ["node_modules", "lib"]
+}

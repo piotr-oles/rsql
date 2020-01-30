@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
+  "mutator": "typescript",
+  "packageManager": "yarn",
+  "reporters": ["html", "clear-text", "progress"],
+  "testRunner": "jest",
+  "transpilers": ["typescript"],
+  "coverageAnalysis": "off",
+  "tsconfigFile": "tests/tsconfig.json",
+  "mutate": ["packages/**/*.ts"]
+}

@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["es5", "scripthost"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "importHelpers": false,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "strict": true,
+    "baseUrl": ".",
+    "composite": true,
+    "incremental": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  }
+  //  "include": ["packages"],
+  //  "exclude": ["node_modules", "lib"],
+  //  "files": []
+  //  "references": [
+  //    { "path": "./packages/ast" },
+  //    { "path": "./packages/builder" },
+  //    { "path": "./packages/definitions" },
+  //    { "path": "./packages/emitter" },
+  //    { "path": "./packages/parser" }
+  //  ]
+}

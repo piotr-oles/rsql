@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "sourceRoot": "./src",
+    "baseUrl": "."
+  },
+  "references": [{ "path": "../definitions" }],
+  "exclude": ["node_modules", "lib"]
+}
