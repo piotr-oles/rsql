@@ -1,0 +1,120 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build project
+        run: yarn build
+
+      - name: Upload @rsql/ast artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ast
+          path: packages/ast/lib
+
+      - name: Upload @rsql/builder artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: builder
+          path: packages/builder/lib
+
+      - name: Upload @rsql/definitions artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: definitions
+          path: packages/definitions/lib
+
+      - name: Upload @rsql/emitter artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: emitter
+          path: packages/emitter/lib
+
+      - name: Upload @rsql/parser artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: parser
+          path: packages/parser/lib
+
+  test:
+    runs-on: ${{ matrix.os }}
+    needs: build
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        node:
+          - "8"
+          - "10"
+          - "12"
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ matrix.node }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --ignore-engines
+
+      - name: Download @rsql/ast artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: ast
+
+      - name: Download @rsql/builder artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: builder
+
+      - name: Download @rsql/definitions artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: definitions
+
+      - name: Download @rsql/emitter artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: emitter
+
+      - name: Download @rsql/parser artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: parser
+
+      - name: Run tests
+        run: yarn test
