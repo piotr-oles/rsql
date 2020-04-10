@@ -23,5 +23,8 @@
   "dependencies": {
     "@rsql/ast": "0.0.0",
     "@rsql/definitions": "0.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
