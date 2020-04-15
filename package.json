@@ -14,7 +14,7 @@
     "clean": "lerna run --parallel clean",
     "dev": "lerna run --parallel dev",
     "build": "lerna run build",
-    "release": "auto shipit",
+    "release": "auto shipit -vv",
     "precommit": "lint-staged && yarn build && yarn test",
     "commit": "./node_modules/.bin/git-cz",
     "lint": "yarn eslint . --ext .js,.jsx,.ts,.tsx",
@@ -75,6 +75,7 @@
     ]
   },
   "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   }
 }
