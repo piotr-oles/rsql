@@ -7,6 +7,25 @@ function assert(condition: unknown): asserts condition {
 
 describe("parse", () => {
   it.each([
+    ["", `Unexpected end in "". Cannot parse empty string.`],
+    ["   ", `Unexpected end in "   ". Cannot parse empty string.`],
+    ["\n\n", `Unexpected end in "\n\n". Cannot parse empty string.`],
+    ["\t  \n\r", `Unexpected end in "\t  \n\r". Cannot parse empty string.`],
+  ])("throws error for empty rsql '%p'", (rsql, expectedError) => {
+    expect(() => parse(rsql)).toThrowError(expectedError);
+  });
+
+  it.each([
+    [undefined, 'The argument passed to the "parse" function should be a string, but undefined passed.'],
+    [null, 'The argument passed to the "parse" function should be a string, but null passed.'],
+    [10, 'The argument passed to the "parse" function should be a string, but number passed.'],
+    [{}, 'The argument passed to the "parse" function should be a string, but object passed.'],
+    [[], 'The argument passed to the "parse" function should be a string, but object passed.'],
+  ])("throws error for invalid rsql '%p'", (rsql, expectedError) => {
+    expect(() => parse((rsql as unknown) as string)).toThrowError(expectedError);
+  });
+
+  it.each([
     ["==", "=="],
     ["!=", "!="],
     ["<=", "<="],

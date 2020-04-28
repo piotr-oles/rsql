@@ -1,4 +1,5 @@
 import { ExpressionNode, isExpressionNode, isSelectorNode, isValueNode, Node } from "@rsql/ast";
+import { InvalidArgumentError } from "@rsql/definitions";
 import InvalidTokenError from "./error/InvalidTokenError";
 import lex from "./lexer/lex";
 import Token, {
@@ -203,7 +204,20 @@ function handleAccept(context: ParserContext, input: string): ExpressionNode {
 }
 
 function parse(input: string): ExpressionNode {
+  if (typeof input !== "string") {
+    throw new InvalidArgumentError(
+      `The argument passed to the "parse" function should be a string, but ${
+        input === null ? "null" : typeof input
+      } passed.`
+    );
+  }
+
   const tokens = lex(input);
+
+  if (tokens.length === 1 && tokens[0].type === "END") {
+    throw InvalidTokenError.createForEmptyInput(tokens[0], input);
+  }
+
   let context = createParserContext(tokens);
 
   while (context.position < context.tokens.length) {

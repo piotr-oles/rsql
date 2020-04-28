@@ -17,6 +17,10 @@ const seekAnyToken: SeekProcessor<AnyToken> = (context) => {
   // first skip all whitespace chars
   skipWhitespace(context);
 
+  if (context.position >= context.length) {
+    return null;
+  }
+
   // then decide what to do based on the current char
   const char = context.buffer.charAt(context.position);
   let token: AnyToken | null = null;

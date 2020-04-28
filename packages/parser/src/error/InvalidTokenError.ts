@@ -19,6 +19,10 @@ class InvalidTokenError extends Error {
     );
   }
 
+  static createForEmptyInput(token: AnyToken, source: string): InvalidTokenError {
+    return new InvalidTokenError(`Unexpected end in "${source}". Cannot parse empty string.`, token, source);
+  }
+
   constructor(message: string, readonly token: AnyToken, readonly source: string) {
     super(message);
 
