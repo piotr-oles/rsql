@@ -1,4 +1,4 @@
-import InvalidTokenError from "./error/InvalidTokenError";
+import ParsingError from "./error/ParsingError";
 import parse from "./parse";
 
-export { parse, InvalidTokenError };
+export { parse, ParsingError };

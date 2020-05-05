@@ -12,9 +12,17 @@ type VerboseLogicOperatorSymbol = typeof VerboseLogicOperatorSymbols[number];
 const LogicOperatorSymbols = [AND, OR, AND_VERBOSE, OR_VERBOSE];
 type LogicOperatorSymbol = typeof LogicOperatorSymbols[number];
 
-const LOGIC_OPERATOR_SYMBOLS_SET = new Set(LogicOperatorSymbols);
+const LogicOperatorSymbolsSet = new Set(LogicOperatorSymbols);
 function isLogicOperatorSymbol(candidate: string): candidate is LogicOperatorSymbol {
-  return LOGIC_OPERATOR_SYMBOLS_SET.has(candidate as LogicOperatorSymbol);
+  return LogicOperatorSymbolsSet.has(candidate as LogicOperatorSymbol);
+}
+
+function isAndOperatorSymbol(candidate: string): candidate is LogicOperatorSymbol {
+  return candidate === AND || candidate === AND_VERBOSE;
+}
+
+function isOrOperatorSymbol(candidate: string): candidate is LogicOperatorSymbol {
+  return candidate === OR || candidate === OR_VERBOSE;
 }
 
 const CANONICAL_LOGIC_OPERATOR_SYMBOL_MAP = {
@@ -26,10 +34,16 @@ function mapToCanonicalLogicOperatorSymbol(symbol: LogicOperatorSymbol): Canonic
 }
 
 export {
+  AND,
+  OR,
+  AND_VERBOSE,
+  OR_VERBOSE,
   CanonicalLogicOperatorSymbols,
   VerboseLogicOperatorSymbols,
   LogicOperatorSymbols,
   isLogicOperatorSymbol,
+  isAndOperatorSymbol,
+  isOrOperatorSymbol,
   mapToCanonicalLogicOperatorSymbol,
   CanonicalLogicOperatorSymbol,
   VerboseLogicOperatorSymbol,

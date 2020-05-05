@@ -20,9 +20,34 @@ type VerboseComparisionOperatorSymbol = typeof VerboseComparisionOperatorSymbols
 const ComparisionOperatorSymbols = [EQ, NEQ, LE, GE, LT, GT, IN, OUT, LE_VERBOSE, GE_VERBOSE, LT_VERBOSE, GT_VERBOSE];
 type ComparisionOperatorSymbol = typeof ComparisionOperatorSymbols[number];
 
-const COMPARISION_OPERATOR_SYMBOLS_SET = new Set(ComparisionOperatorSymbols);
+const ComparisionOperatorSymbolsSet = new Set(ComparisionOperatorSymbols);
 function isComparisionOperatorSymbol(candidate: string): candidate is ComparisionOperatorSymbol {
-  return COMPARISION_OPERATOR_SYMBOLS_SET.has(candidate as ComparisionOperatorSymbol);
+  return ComparisionOperatorSymbolsSet.has(candidate as ComparisionOperatorSymbol);
+}
+
+function isEqOperatorSymbol(candidate: string): candidate is ComparisionOperatorSymbol {
+  return candidate === EQ;
+}
+function isNeqOperatorSymbol(candidate: string): candidate is ComparisionOperatorSymbol {
+  return candidate === NEQ;
+}
+function isLeOperatorSymbol(candidate: string): candidate is ComparisionOperatorSymbol {
+  return candidate === LE || candidate === LE_VERBOSE;
+}
+function isGeOperatorSymbol(candidate: string): candidate is ComparisionOperatorSymbol {
+  return candidate === GE || candidate === GE_VERBOSE;
+}
+function isLtOperatorSymbol(candidate: string): candidate is ComparisionOperatorSymbol {
+  return candidate === LT || candidate === LT_VERBOSE;
+}
+function isGtOperatorSymbol(candidate: string): candidate is ComparisionOperatorSymbol {
+  return candidate === GT || candidate === GT_VERBOSE;
+}
+function isInOperatorSymbol(candidate: string): candidate is ComparisionOperatorSymbol {
+  return candidate === IN;
+}
+function isOutOperatorSymbol(candidate: string): candidate is ComparisionOperatorSymbol {
+  return candidate === OUT;
 }
 
 const CANONICAL_COMPARISION_OPERATOR_SYMBOL_MAP = {
@@ -38,10 +63,30 @@ function mapToCanonicalComparisionOperatorSymbol(
 }
 
 export {
+  EQ,
+  NEQ,
+  LE,
+  GE,
+  LT,
+  GT,
+  IN,
+  OUT,
+  LE_VERBOSE,
+  GE_VERBOSE,
+  LT_VERBOSE,
+  GT_VERBOSE,
   CanonicalComparisionOperatorSymbols,
   VerboseComparisionOperatorSymbols,
   ComparisionOperatorSymbols,
   isComparisionOperatorSymbol,
+  isEqOperatorSymbol,
+  isNeqOperatorSymbol,
+  isLeOperatorSymbol,
+  isGeOperatorSymbol,
+  isLtOperatorSymbol,
+  isGtOperatorSymbol,
+  isInOperatorSymbol,
+  isOutOperatorSymbol,
   mapToCanonicalComparisionOperatorSymbol,
   CanonicalComparisionOperatorSymbol,
   VerboseComparisionOperatorSymbol,

@@ -2,9 +2,7 @@
   "extends": "../../tsconfig",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./lib",
-    "sourceRoot": "./src",
-    "baseUrl": "./src"
+    "outDir": "./lib"
   },
   "references": [{ "path": "../ast" }, { "path": "../definitions" }],
   "exclude": ["node_modules", "lib"]

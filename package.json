@@ -21,6 +21,9 @@
     "test": "jest",
     "test:mutate": "stryker run"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged && yarn build && yarn test",

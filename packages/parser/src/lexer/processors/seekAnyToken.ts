@@ -1,4 +1,4 @@
-import { InvalidCharacterError } from "@rsql/definitions";
+import InvalidCharacterError from "../../error/InvalidCharacterError";
 import { AnyToken } from "../Token";
 import seekComparisionOperatorToken from "./seekComparisionOperatorToken";
 import seekLogicCanonicalOperatorToken from "./seekLogicCanonicalOperatorToken";
@@ -10,10 +10,6 @@ import seekUnquotedToken from "./seekUnquotedToken";
 import skipWhitespace from "./skipWhitespace";
 
 const seekAnyToken: SeekProcessor<AnyToken> = (context) => {
-  if (context.position >= context.length) {
-    return null;
-  }
-
   // first skip all whitespace chars
   skipWhitespace(context);
 
