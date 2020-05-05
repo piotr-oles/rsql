@@ -1,18 +1,25 @@
 import {
-  CanonicalComparisionOperatorSymbol,
-  CanonicalLogicOperatorSymbol,
   ReservedChars,
   InvalidArgumentError,
-  InvalidCharacterError,
-  mapToCanonicalComparisionOperatorSymbol,
   ComparisionOperatorSymbol,
+  LogicOperatorSymbol,
+  isAndOperatorSymbol,
+  isOrOperatorSymbol,
+  isEqOperatorSymbol,
+  isNeqOperatorSymbol,
+  isLeOperatorSymbol,
+  isGeOperatorSymbol,
+  isLtOperatorSymbol,
+  isGtOperatorSymbol,
+  isInOperatorSymbol,
+  isOutOperatorSymbol,
 } from "@rsql/definitions";
 
 const NodeType = {
   SELECTOR: "SELECTOR",
   VALUE: "VALUE",
-  COMPARISION_EXPRESSION: "COMPARISION_EXPRESSION",
-  LOGIC_EXPRESSION: "LOGIC_EXPRESSION",
+  COMPARISION: "COMPARISION",
+  LOGIC: "LOGIC",
 } as const;
 
 interface Node<TType = string> {
@@ -27,7 +34,7 @@ interface ValueNode extends Node<typeof NodeType.VALUE> {
   readonly value: string | string[];
 }
 
-interface BinaryExpressionNode<
+interface BinaryNode<
   TType extends string = string,
   TLeft extends Node = Node,
   TOperator extends string = string,
@@ -38,21 +45,9 @@ interface BinaryExpressionNode<
   readonly right: TRight;
 }
 
-type ComparisionExpressionNode = BinaryExpressionNode<
-  typeof NodeType.COMPARISION_EXPRESSION,
-  SelectorNode,
-  CanonicalComparisionOperatorSymbol,
-  ValueNode
->;
-
-type LogicExpressionNode = BinaryExpressionNode<
-  typeof NodeType.LOGIC_EXPRESSION,
-  ExpressionNode,
-  CanonicalLogicOperatorSymbol,
-  ExpressionNode
->;
-
-type ExpressionNode = ComparisionExpressionNode | LogicExpressionNode;
+type ComparisionNode = BinaryNode<typeof NodeType.COMPARISION, SelectorNode, ComparisionOperatorSymbol, ValueNode>;
+type LogicNode = BinaryNode<typeof NodeType.LOGIC, ExpressionNode, LogicOperatorSymbol, ExpressionNode>;
+type ExpressionNode = ComparisionNode | LogicNode;
 
 function createNamedNode<TNode extends Node>(node: TNode, toString: () => string): TNode {
   Object.defineProperty(node, "toString", {
@@ -67,15 +62,28 @@ function createNamedNode<TNode extends Node>(node: TNode, toString: () => string
 
 function createSelectorNode(selector: string, skipChecks = false): SelectorNode {
   if (!skipChecks) {
+    if (typeof selector !== "string") {
+      throw InvalidArgumentError.createForInvalidType(
+        "selector",
+        "createSelectorNode",
+        "string",
+        InvalidArgumentError.getTypeOf(selector)
+      );
+    }
+
     if (!selector || selector.length === 0) {
       throw new InvalidArgumentError(
-        'The first argument of the "createSelectorNode" function cannot be an empty string.'
+        'The "selector" passed to the "createSelectorNode" function cannot be an empty string.'
       );
     }
 
     const reservedChar = ReservedChars.find((reservedChar) => selector.indexOf(reservedChar) !== -1);
     if (reservedChar) {
-      throw InvalidCharacterError.createForUnexpectedCharacter(selector.indexOf(reservedChar), selector);
+      throw new InvalidArgumentError(
+        `The "selector" passed to the "createSelectorNode" function contains reserved character '${reservedChar}' at position ${
+          selector.indexOf(reservedChar) + 1
+        } in "${selector}"`
+      );
     }
   }
 
@@ -90,8 +98,17 @@ function createSelectorNode(selector: string, skipChecks = false): SelectorNode 
 
 function createValueNode(value: string | string[], skipChecks = false): ValueNode {
   if (!skipChecks) {
+    if (typeof value !== "string" && !Array.isArray(value)) {
+      throw InvalidArgumentError.createForInvalidType(
+        "value",
+        "createValueNode",
+        "string | string[]",
+        InvalidArgumentError.getTypeOf(value)
+      );
+    }
+
     if (Array.isArray(value) && value.length === 0) {
-      throw new InvalidArgumentError('The first argument of the "createValueNode" function cannot be an empty array.');
+      throw new InvalidArgumentError('The "value" passed to the "createValueNode" function cannot be an empty array.');
     }
   }
 
@@ -104,80 +121,229 @@ function createValueNode(value: string | string[], skipChecks = false): ValueNod
   );
 }
 
-function createComparisionExpressionNode(
+function createComparisionNode(
   selector: SelectorNode,
   operator: ComparisionOperatorSymbol,
-  value: ValueNode
-): ComparisionExpressionNode {
-  const canonicalOperator = mapToCanonicalComparisionOperatorSymbol(operator);
+  value: ValueNode,
+  skipChecks = false
+): ComparisionNode {
+  if (!skipChecks) {
+    if (!isSelectorNode(selector)) {
+      throw InvalidArgumentError.createForInvalidType(
+        "selector",
+        "createComparisionNode",
+        "SelectorNode",
+        isNode(selector) ? String(selector) : InvalidArgumentError.getTypeOf(selector)
+      );
+    }
+    if (typeof operator !== "string") {
+      throw InvalidArgumentError.createForInvalidType(
+        "operator",
+        "createComparisionNode",
+        "string",
+        InvalidArgumentError.getTypeOf(operator)
+      );
+    }
+    if (!isValueNode(value)) {
+      throw InvalidArgumentError.createForInvalidType(
+        "value",
+        "createComparisionNode",
+        "ValueNode",
+        isNode(value) ? String(value) : InvalidArgumentError.getTypeOf(value)
+      );
+    }
+  }
 
   return createNamedNode(
     {
-      type: NodeType.COMPARISION_EXPRESSION,
+      type: NodeType.COMPARISION,
       left: selector,
-      operator: canonicalOperator,
+      operator: operator,
       right: value,
     },
-    () => `ComparisionExpressionNode(${selector},${canonicalOperator},${value})`
+    () => `ComparisionNode(${selector},${operator},${value})`
   );
 }
 
-function createLogicExpressionNode(
+function createLogicNode(
   left: ExpressionNode,
-  operator: CanonicalLogicOperatorSymbol,
-  right: ExpressionNode
-): LogicExpressionNode {
+  operator: LogicOperatorSymbol,
+  right: ExpressionNode,
+  skipChecks = false
+): LogicNode {
+  if (!skipChecks) {
+    if (!isExpressionNode(left)) {
+      throw InvalidArgumentError.createForInvalidType(
+        "left",
+        "createLogicNode",
+        "ExpressionNode",
+        isNode(left) ? String(left) : InvalidArgumentError.getTypeOf(left)
+      );
+    }
+    if (typeof operator !== "string") {
+      throw InvalidArgumentError.createForInvalidType(
+        "operator",
+        "createLogicNode",
+        "string",
+        InvalidArgumentError.getTypeOf(operator)
+      );
+    }
+    if (!isExpressionNode(right)) {
+      throw InvalidArgumentError.createForInvalidType(
+        "right",
+        "createLogicNode",
+        "ExpressionNode",
+        isNode(right) ? String(right) : InvalidArgumentError.getTypeOf(right)
+      );
+    }
+  }
+
   return createNamedNode(
     {
-      type: NodeType.LOGIC_EXPRESSION,
+      type: NodeType.LOGIC,
       left,
-      operator,
+      operator: operator,
       right,
     },
-    () => `LogicExpressionNode(${left},${operator},${right})`
+    () => `LogicNode(${left},${operator},${right})`
   );
 }
 
-function isNode(candidate: object): candidate is Node {
-  return Object.prototype.hasOwnProperty.call(candidate, "type");
+function isNode(candidate: unknown): candidate is Node {
+  return candidate !== undefined && candidate !== null && Object.prototype.hasOwnProperty.call(candidate, "type");
 }
 
-function isSelectorNode(candidate: object): candidate is SelectorNode {
+function isSelectorNode(candidate: unknown): candidate is SelectorNode {
   return isNode(candidate) && candidate.type === NodeType.SELECTOR;
 }
 
-function isValueNode(candidate: object): candidate is ValueNode {
+function isValueNode(candidate: unknown): candidate is ValueNode {
   return isNode(candidate) && candidate.type === NodeType.VALUE;
 }
 
-function isComparisionExpressionNode(candidate: object): candidate is ComparisionExpressionNode {
-  return isNode(candidate) && candidate.type === NodeType.COMPARISION_EXPRESSION;
+function isComparisionNode(candidate: unknown): candidate is ComparisionNode {
+  return isNode(candidate) && candidate.type === NodeType.COMPARISION;
 }
 
-function isLogicExpressionNode(candidate: object): candidate is LogicExpressionNode {
-  return isNode(candidate) && candidate.type === NodeType.LOGIC_EXPRESSION;
+function isEqNode(candidate: unknown): candidate is ComparisionNode {
+  return isComparisionNode(candidate) && isEqOperatorSymbol(candidate.operator);
+}
+function isNeqNode(candidate: unknown): candidate is ComparisionNode {
+  return isComparisionNode(candidate) && isNeqOperatorSymbol(candidate.operator);
+}
+function isLeNode(candidate: unknown): candidate is ComparisionNode {
+  return isComparisionNode(candidate) && isLeOperatorSymbol(candidate.operator);
+}
+function isGeNode(candidate: unknown): candidate is ComparisionNode {
+  return isComparisionNode(candidate) && isGeOperatorSymbol(candidate.operator);
+}
+function isLtNode(candidate: unknown): candidate is ComparisionNode {
+  return isComparisionNode(candidate) && isLtOperatorSymbol(candidate.operator);
+}
+function isGtNode(candidate: unknown): candidate is ComparisionNode {
+  return isComparisionNode(candidate) && isGtOperatorSymbol(candidate.operator);
+}
+function isInNode(candidate: unknown): candidate is ComparisionNode {
+  return isComparisionNode(candidate) && isInOperatorSymbol(candidate.operator);
+}
+function isOutNode(candidate: unknown): candidate is ComparisionNode {
+  return isComparisionNode(candidate) && isOutOperatorSymbol(candidate.operator);
 }
 
-function isExpressionNode(candidate: object): candidate is ExpressionNode {
-  return isComparisionExpressionNode(candidate) || isLogicExpressionNode(candidate);
+function isLogicNode(candidate: unknown): candidate is LogicNode {
+  return isNode(candidate) && candidate.type === NodeType.LOGIC;
+}
+
+function isAndNode(candidate: unknown): candidate is LogicNode {
+  return isLogicNode(candidate) && isAndOperatorSymbol(candidate.operator);
+}
+
+function isOrNode(candidate: unknown): candidate is LogicNode {
+  return isLogicNode(candidate) && isOrOperatorSymbol(candidate.operator);
+}
+
+function isExpressionNode(candidate: unknown): candidate is ExpressionNode {
+  return isComparisionNode(candidate) || isLogicNode(candidate);
+}
+
+function getSelector(comparision: ComparisionNode): string {
+  if (!isComparisionNode(comparision)) {
+    throw InvalidArgumentError.createForInvalidType(
+      "comparision",
+      "getSelector",
+      "ComparisionNode",
+      isNode(comparision) ? String(comparision) : InvalidArgumentError.getTypeOf(comparision)
+    );
+  }
+
+  return comparision.left.selector;
+}
+
+function getValue(comparision: ComparisionNode): string | string[] {
+  if (!isComparisionNode(comparision)) {
+    throw InvalidArgumentError.createForInvalidType(
+      "comparision",
+      "getSelector",
+      "ComparisionNode",
+      isNode(comparision) ? String(comparision) : InvalidArgumentError.getTypeOf(comparision)
+    );
+  }
+
+  return comparision.right.value;
+}
+
+function getSingleValue(comparision: ComparisionNode): string {
+  const value = getValue(comparision);
+  if (Array.isArray(value)) {
+    throw new InvalidArgumentError(
+      'The "comparision" passed to the "getSingleValue" function has to contain string value, but contains an array.'
+    );
+  }
+
+  return value;
+}
+
+function getMultiValue(comparision: ComparisionNode): string[] {
+  const value = getValue(comparision);
+  if (typeof value === "string") {
+    throw new InvalidArgumentError(
+      'The "comparision" passed to the "getMultiValue" function has to contain array value, but contains a single string.'
+    );
+  }
+
+  return value;
 }
 
 export {
   Node,
   createSelectorNode,
   createValueNode,
-  createComparisionExpressionNode,
-  createLogicExpressionNode,
+  createComparisionNode,
+  createLogicNode,
   isNode,
   isSelectorNode,
   isValueNode,
-  isComparisionExpressionNode,
-  isLogicExpressionNode,
+  isComparisionNode,
+  isEqNode,
+  isNeqNode,
+  isLeNode,
+  isGeNode,
+  isLtNode,
+  isGtNode,
+  isInNode,
+  isOutNode,
+  isLogicNode,
+  isAndNode,
+  isOrNode,
   isExpressionNode,
+  getSelector,
+  getValue,
+  getSingleValue,
+  getMultiValue,
   SelectorNode,
   ValueNode,
-  BinaryExpressionNode,
-  ComparisionExpressionNode,
-  LogicExpressionNode,
+  BinaryNode,
+  ComparisionNode,
+  LogicNode,
   ExpressionNode,
 };

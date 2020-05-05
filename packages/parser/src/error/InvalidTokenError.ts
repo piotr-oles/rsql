@@ -1,11 +1,14 @@
+import ParsingError from "./ParsingError";
 import { AnyToken, isEndToken } from "../lexer/Token";
 
-class InvalidTokenError extends Error {
+class InvalidTokenError extends ParsingError {
   static createForUnexpectedToken(token: AnyToken, source: string): InvalidTokenError {
     return new InvalidTokenError(
       isEndToken(token)
         ? `Unexpected end in "${source}"`
-        : `Unexpected character '${token.value}' at position ${token.position + 1} in "${source}"`,
+        : `Unexpected ${token.value.length > 1 ? "string" : "character"} '${token.value}' at position ${
+            token.position + 1
+          } in "${source}"`,
       token,
       source
     );
@@ -19,8 +22,12 @@ class InvalidTokenError extends Error {
     );
   }
 
-  constructor(message: string, readonly token: AnyToken, readonly source: string) {
-    super(message);
+  static createForEmptyInput(token: AnyToken, source: string): InvalidTokenError {
+    return new InvalidTokenError(`Unexpected end in "${source}". Cannot parse empty string.`, token, source);
+  }
+
+  constructor(message: string, readonly token: AnyToken, source: string) {
+    super(message, source);
 
     Object.setPrototypeOf(this, InvalidTokenError.prototype);
   }

@@ -1,4 +1,4 @@
-import { InvalidCharacterError } from "@rsql/definitions";
+import InvalidCharacterError from "../../error/InvalidCharacterError";
 import { createQuotedToken, QuotedToken } from "../Token";
 import { SeekProcessor } from "../LexerProcessor";
 

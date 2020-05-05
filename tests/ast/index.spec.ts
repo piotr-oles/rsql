@@ -1,38 +1,37 @@
 import {
   createSelectorNode,
   createValueNode,
-  createComparisionExpressionNode,
-  createLogicExpressionNode,
+  createComparisionNode,
+  createLogicNode,
   isNode,
   isSelectorNode,
   isValueNode,
-  isComparisionExpressionNode,
-  isLogicExpressionNode,
+  isComparisionNode,
+  isLogicNode,
   isExpressionNode,
   Node,
   SelectorNode,
   ValueNode,
-  BinaryExpressionNode,
-  ComparisionExpressionNode,
-  LogicExpressionNode,
+  BinaryNode,
+  ComparisionNode,
+  LogicNode,
   ExpressionNode,
 } from "@rsql/ast";
-import { ComparisionOperatorSymbol } from "@rsql/definitions";
 
 describe("AST", () => {
   it("exports node factories", () => {
     expect(createSelectorNode).toBeInstanceOf(Function);
     expect(createValueNode).toBeInstanceOf(Function);
-    expect(createComparisionExpressionNode).toBeInstanceOf(Function);
-    expect(createLogicExpressionNode).toBeInstanceOf(Function);
+    expect(createComparisionNode).toBeInstanceOf(Function);
+    expect(createLogicNode).toBeInstanceOf(Function);
   });
 
   it("exports node type guards", () => {
     expect(isNode).toBeInstanceOf(Function);
     expect(isSelectorNode).toBeInstanceOf(Function);
     expect(isValueNode).toBeInstanceOf(Function);
-    expect(isComparisionExpressionNode).toBeInstanceOf(Function);
-    expect(isLogicExpressionNode).toBeInstanceOf(Function);
+    expect(isComparisionNode).toBeInstanceOf(Function);
+    expect(isLogicNode).toBeInstanceOf(Function);
     expect(isExpressionNode).toBeInstanceOf(Function);
   });
 
@@ -41,9 +40,9 @@ describe("AST", () => {
     let node: Node;
     let selectorNode: SelectorNode;
     let valueNode: ValueNode;
-    let binaryExpressionNode: BinaryExpressionNode;
-    let comparisionExpressionNode: ComparisionExpressionNode;
-    let logicExpressionNode: LogicExpressionNode;
+    let binaryExpressionNode: BinaryNode;
+    let comparisionNode: ComparisionNode;
+    let logicNode: LogicNode;
     let expressionNode: ExpressionNode;
     /* eslint-enable @typescript-eslint/no-unused-vars */
 
@@ -59,8 +58,11 @@ describe("AST", () => {
   });
 
   it.each([
-    ["", 'The first argument of the "createSelectorNode" function cannot be an empty string.'],
-    ["test ", "Unexpected character ' ' at position 5 in \"test \""],
+    ["", 'The "selector" passed to the "createSelectorNode" function cannot be an empty string.'],
+    [
+      "test ",
+      'The "selector" passed to the "createSelectorNode" function contains reserved character \' \' at position 5 in "test "',
+    ],
   ])("throws an error for invalid selector input '%p'", (selector, error) => {
     expect(() => createSelectorNode(selector)).toThrowError(error);
     expect(() => createSelectorNode(selector, true)).not.toThrowError();
@@ -104,7 +106,7 @@ describe("AST", () => {
     expect(node.toString()).toEqual(`ValueNode(${values.map((value) => `"${value}"`).join(",")})`);
   });
 
-  it.each([[[], 'The first argument of the "createValueNode" function cannot be an empty array.']])(
+  it.each([[[], 'The "value" passed to the "createValueNode" function cannot be an empty array.']])(
     "throws an error for invalid value input",
     (value, error) => {
       expect(() => createValueNode(value)).toThrowError(error);
@@ -112,57 +114,38 @@ describe("AST", () => {
     }
   );
 
-  it.each(["==", "!=", ">", ">=", "<", "<=", "=in=", "=out="])(
+  it.each(["==", "!=", ">", ">=", "<", "<=", "=in=", "=out=", "=gt=", "=ge=", "=lt=", "=le="] as const)(
     "creates comparision expression node for canonical operator '%p'",
     (operator) => {
       const selector = createSelectorNode("selector");
       const value = createValueNode("value");
-      const comparision = createComparisionExpressionNode(selector, operator as ComparisionOperatorSymbol, value);
+      const comparision = createComparisionNode(selector, operator, value);
 
-      expect(comparision.type).toEqual("COMPARISION_EXPRESSION");
+      expect(comparision.type).toEqual("COMPARISION");
       expect(comparision.left).toEqual(selector);
       expect(comparision.right).toEqual(value);
       expect(comparision.operator).toEqual(operator);
       expect(comparision.toString()).toEqual(
-        `ComparisionExpressionNode(SelectorNode("selector"),${operator},ValueNode("value"))`
+        `ComparisionNode(SelectorNode("selector"),${operator},ValueNode("value"))`
       );
     }
   );
 
-  it.each([
-    ["=gt=", ">"],
-    ["=ge=", ">="],
-    ["=lt=", "<"],
-    ["=le=", "<="],
-  ])("creates comparision expression node for verbose operator '%p'", (verboseOperator, canonicalOperator) => {
-    const selector = createSelectorNode("selector");
-    const value = createValueNode("value");
-    const comparision = createComparisionExpressionNode(selector, verboseOperator as ComparisionOperatorSymbol, value);
-
-    expect(comparision.type).toEqual("COMPARISION_EXPRESSION");
-    expect(comparision.left).toEqual(selector);
-    expect(comparision.right).toEqual(value);
-    expect(comparision.operator).toEqual(canonicalOperator);
-    expect(comparision.toString()).toEqual(
-      `ComparisionExpressionNode(SelectorNode("selector"),${canonicalOperator},ValueNode("value"))`
-    );
-  });
-
   it.each([";", ","] as const)("creates logic expression node for operator '%p'", (operator) => {
-    const left = createComparisionExpressionNode(createSelectorNode("selectorA"), "==", createValueNode("valueA"));
-    const right = createComparisionExpressionNode(
+    const left = createComparisionNode(createSelectorNode("selectorA"), "==", createValueNode("valueA"));
+    const right = createComparisionNode(
       createSelectorNode("selectorB"),
       "=out=",
       createValueNode(["valueB", "valueC"])
     );
-    const logic = createLogicExpressionNode(left, operator, right);
+    const logic = createLogicNode(left, operator, right);
 
-    expect(logic.type).toEqual("LOGIC_EXPRESSION");
+    expect(logic.type).toEqual("LOGIC");
     expect(logic.left).toEqual(left);
     expect(logic.right).toEqual(right);
     expect(logic.operator).toEqual(operator);
     expect(logic.toString()).toEqual(
-      `LogicExpressionNode(ComparisionExpressionNode(SelectorNode("selectorA"),==,ValueNode("valueA")),${operator},ComparisionExpressionNode(SelectorNode("selectorB"),=out=,ValueNode("valueB","valueC")))`
+      `LogicNode(ComparisionNode(SelectorNode("selectorA"),==,ValueNode("valueA")),${operator},ComparisionNode(SelectorNode("selectorB"),=out=,ValueNode("valueB","valueC")))`
     );
   });
 
@@ -215,7 +198,7 @@ describe("AST", () => {
     [{}, false],
     [
       {
-        type: "COMPARISION_EXPRESSION",
+        type: "COMPARISION",
         left: { type: "SELECTOR", selector: "selector" },
         operator: "==",
         right: { type: "VALUE", value: "value" },
@@ -225,14 +208,14 @@ describe("AST", () => {
     // we are very not very strict on checks - it's used in the parser so for the sake of performance we assume that we pass a "friendly" input
     [
       {
-        type: "COMPARISION_EXPRESSION",
+        type: "COMPARISION",
         foo: "invalid",
       },
       true,
     ],
     [
       {
-        type: "COMPARISION_EXPRESSION",
+        type: "COMPARISION",
         left: "invalid",
         operator: "invalid",
         right: "invalid",
@@ -240,7 +223,7 @@ describe("AST", () => {
       true,
     ],
   ])("checks if '%p' candidate is a comparision expression node (%p)", (candidate, is) => {
-    expect(isComparisionExpressionNode(candidate)).toEqual(is);
+    expect(isComparisionNode(candidate)).toEqual(is);
     expect(isExpressionNode(candidate)).toEqual(is);
   });
 
@@ -249,14 +232,14 @@ describe("AST", () => {
       {
         type: "",
         left: {
-          type: "COMPARISION_EXPRESSION",
+          type: "COMPARISION",
           left: { type: "SELECTOR", selector: "selector" },
           operator: "==",
           right: { type: "VALUE", value: "valueA" },
         },
         operator: ";",
         right: {
-          type: "COMPARISION_EXPRESSION",
+          type: "COMPARISION",
           left: { type: "SELECTOR", selector: "selector" },
           operator: "==",
           right: { type: "VALUE", value: "valueB" },
@@ -267,16 +250,16 @@ describe("AST", () => {
     [{}, false],
     [
       {
-        type: "LOGIC_EXPRESSION",
+        type: "LOGIC",
         left: {
-          type: "COMPARISION_EXPRESSION",
+          type: "COMPARISION",
           left: { type: "SELECTOR", selector: "selector" },
           operator: "==",
           right: { type: "VALUE", value: "valueA" },
         },
         operator: ";",
         right: {
-          type: "COMPARISION_EXPRESSION",
+          type: "COMPARISION",
           left: { type: "SELECTOR", selector: "selector" },
           operator: "==",
           right: { type: "VALUE", value: "valueB" },
@@ -286,18 +269,18 @@ describe("AST", () => {
     ],
     [
       {
-        type: "LOGIC_EXPRESSION",
+        type: "LOGIC",
         left: {
-          type: "LOGIC_EXPRESSION",
+          type: "LOGIC",
           left: {
-            type: "COMPARISION_EXPRESSION",
+            type: "COMPARISION",
             left: { type: "SELECTOR", selector: "selector" },
             operator: "==",
             right: { type: "VALUE", value: "valueA" },
           },
           operator: ",",
           right: {
-            type: "COMPARISION_EXPRESSION",
+            type: "COMPARISION",
             left: { type: "SELECTOR", selector: "selector" },
             operator: "==",
             right: { type: "VALUE", value: "valueB" },
@@ -305,7 +288,7 @@ describe("AST", () => {
         },
         operator: ";",
         right: {
-          type: "COMPARISION_EXPRESSION",
+          type: "COMPARISION",
           left: { type: "SELECTOR", selector: "selector" },
           operator: "==",
           right: { type: "VALUE", value: "valueB" },
@@ -315,18 +298,18 @@ describe("AST", () => {
     ],
     [
       {
-        type: "LOGIC_EXPRESSION",
+        type: "LOGIC",
         left: {
-          type: "LOGIC_EXPRESSION",
+          type: "LOGIC",
           left: {
-            type: "COMPARISION_EXPRESSION",
+            type: "COMPARISION",
             left: { type: "SELECTOR", selector: "selector" },
             operator: "==",
             right: { type: "VALUE", value: "valueA" },
           },
           operator: ",",
           right: {
-            type: "COMPARISION_EXPRESSION",
+            type: "COMPARISION",
             left: { type: "SELECTOR", selector: "selector" },
             operator: "==",
             right: { type: "VALUE", value: "valueB" },
@@ -334,16 +317,16 @@ describe("AST", () => {
         },
         operator: ",",
         right: {
-          type: "LOGIC_EXPRESSION",
+          type: "LOGIC",
           left: {
-            type: "COMPARISION_EXPRESSION",
+            type: "COMPARISION",
             left: { type: "SELECTOR", selector: "selector" },
             operator: "==",
             right: { type: "VALUE", value: "valueA" },
           },
           operator: ",",
           right: {
-            type: "COMPARISION_EXPRESSION",
+            type: "COMPARISION",
             left: { type: "SELECTOR", selector: "selector" },
             operator: "==",
             right: { type: "VALUE", value: "valueB" },
@@ -355,14 +338,14 @@ describe("AST", () => {
     // we are very not very strict on checks - it's used in the parser so for the sake of performance we assume that we pass a "friendly" input
     [
       {
-        type: "LOGIC_EXPRESSION",
+        type: "LOGIC",
         foo: "invalid",
       },
       true,
     ],
     [
       {
-        type: "LOGIC_EXPRESSION",
+        type: "LOGIC",
         left: "invalid",
         operator: "invalid",
         right: "invalid",
@@ -370,7 +353,7 @@ describe("AST", () => {
       true,
     ],
   ])("checks if '%p' candidate is a logic expression node (%p)", (candidate, is) => {
-    expect(isLogicExpressionNode(candidate)).toEqual(is);
+    expect(isLogicNode(candidate)).toEqual(is);
     expect(isExpressionNode(candidate)).toEqual(is);
   });
 });

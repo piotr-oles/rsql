@@ -1,4 +1,5 @@
 import { ExpressionNode, isExpressionNode, isSelectorNode, isValueNode, Node } from "@rsql/ast";
+import { InvalidArgumentError } from "@rsql/definitions";
 import InvalidTokenError from "./error/InvalidTokenError";
 import lex from "./lexer/lex";
 import Token, {
@@ -6,8 +7,8 @@ import Token, {
   isCloseParenthesisToken,
   isComparisionOperatorToken,
   isEndToken,
-  isLogicAndOperatorToken,
-  isLogicOrOperatorToken,
+  isAndOperatorToken,
+  isOrOperatorToken,
   isOpenParenthesisToken,
   isQuotedToken,
   isUnquotedToken,
@@ -60,8 +61,8 @@ const tokenMatchers = [
   /* 2 */ isUnquotedToken, // UNQUOTED
   /* 3 */ isQuotedToken, // QUOTED
   /* 4 */ isComparisionOperatorToken, // C_OP
-  /* 5 */ isLogicOrOperatorToken, // OR_OP
-  /* 6 */ isLogicAndOperatorToken, // AND_OP
+  /* 5 */ isOrOperatorToken, // OR_OP
+  /* 6 */ isAndOperatorToken, // AND_OP
   /* 7 */ isEndToken, // END
 ];
 
@@ -202,8 +203,21 @@ function handleAccept(context: ParserContext, input: string): ExpressionNode {
   return getParserContextHead(context) as ExpressionNode;
 }
 
-function parse(input: string): ExpressionNode {
-  const tokens = lex(input);
+function parse(rsql: string): ExpressionNode {
+  if (typeof rsql !== "string") {
+    throw new InvalidArgumentError(
+      `The argument passed to the "parse" function should be a string, but ${
+        rsql === null ? "null" : typeof rsql
+      } passed.`
+    );
+  }
+
+  const tokens = lex(rsql);
+
+  if (tokens.length === 1 && tokens[0].type === "END") {
+    throw InvalidTokenError.createForEmptyInput(tokens[0], rsql);
+  }
+
   let context = createParserContext(tokens);
 
   while (context.position < context.tokens.length) {
@@ -212,7 +226,7 @@ function parse(input: string): ExpressionNode {
     const operation = getParserTokenOperation(state, token);
 
     if (!operation) {
-      throw InvalidTokenError.createForUnexpectedToken(getMostMeaningfulInvalidToken(context), input);
+      throw InvalidTokenError.createForUnexpectedToken(getMostMeaningfulInvalidToken(context), rsql);
     }
 
     switch (operation.type) {
@@ -225,19 +239,19 @@ function parse(input: string): ExpressionNode {
         break;
 
       case OperationType.REDUCE:
-        context = handleReduce(context, operation, input);
+        context = handleReduce(context, operation, rsql);
         break;
 
       case OperationType.POP:
-        context = handlePop(context, operation, input);
+        context = handlePop(context, operation, rsql);
         break;
 
       case OperationType.ACCEPT:
-        return handleAccept(context, input);
+        return handleAccept(context, rsql);
     }
   }
 
-  throw InvalidTokenError.createForUnexpectedToken(getMostMeaningfulInvalidToken(context), input);
+  throw InvalidTokenError.createForUnexpectedToken(getMostMeaningfulInvalidToken(context), rsql);
 }
 
 export default parse;

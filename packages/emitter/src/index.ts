@@ -1,15 +1,23 @@
 import {
-  ComparisionExpressionNode,
-  isComparisionExpressionNode,
-  isLogicExpressionNode,
+  ComparisionNode,
+  isComparisionNode,
+  isLogicNode,
+  isOrNode,
   isSelectorNode,
   isValueNode,
-  LogicExpressionNode,
+  LogicNode,
   Node,
   SelectorNode,
   ValueNode,
 } from "@rsql/ast";
-import { InvalidArgumentError, QuoteSymbol, ReservedChars } from "@rsql/definitions";
+import {
+  AND_VERBOSE,
+  InvalidArgumentError,
+  isAndOperatorSymbol,
+  OR_VERBOSE,
+  QuoteSymbol,
+  ReservedChars,
+} from "@rsql/definitions";
 
 function escapeQuotes(value: string, quote: string) {
   let escapedValue = value;
@@ -58,39 +66,45 @@ function emitValue(node: ValueNode, quote: QuoteSymbol = '"') {
     : escapeValue(node.value, quote);
 }
 
-function emitComparisionExpression(node: ComparisionExpressionNode) {
+function emitComparision(node: ComparisionNode) {
   return `${emitSelector(node.left)}${node.operator}${emitValue(node.right)}`;
 }
 
-function emitLogicExpression(node: LogicExpressionNode) {
+function emitLogic(node: LogicNode) {
   let left = emit(node.left);
   let right = emit(node.right);
 
   // handle operator precedence - as it's only the case for AND operator, we don't need a generic logic for that
-  if (node.operator === ";") {
-    if (isLogicExpressionNode(node.left) && node.left.operator === ",") {
+  if (isAndOperatorSymbol(node.operator)) {
+    if (isOrNode(node.left)) {
       left = `(${left})`;
     }
-    if (isLogicExpressionNode(node.right) && node.right.operator === ",") {
+    if (isOrNode(node.right)) {
       right = `(${right})`;
     }
   }
 
-  return `${left}${node.operator}${right}`;
+  const operator = node.operator === AND_VERBOSE || node.operator === OR_VERBOSE ? ` ${node.operator} ` : node.operator;
+
+  return `${left}${operator}${right}`;
 }
 
-function emit(node: Node): string {
-  if (isSelectorNode(node)) {
-    return emitSelector(node);
-  } else if (isValueNode(node)) {
-    return emitValue(node);
-  } else if (isComparisionExpressionNode(node)) {
-    return emitComparisionExpression(node);
-  } else if (isLogicExpressionNode(node)) {
-    return emitLogicExpression(node);
+function emit(ast: Node): string {
+  if (isSelectorNode(ast)) {
+    return emitSelector(ast);
+  } else if (isValueNode(ast)) {
+    return emitValue(ast);
+  } else if (isComparisionNode(ast)) {
+    return emitComparision(ast);
+  } else if (isLogicNode(ast)) {
+    return emitLogic(ast);
   }
 
-  throw new InvalidArgumentError(`Unsupported node "${node}".`);
+  throw new InvalidArgumentError(
+    `The argument passed to the "emit" function should be a RSQL AST, but "${
+      ast === null ? "null" : typeof ast
+    }" passed.`
+  );
 }
 
 export { emit };

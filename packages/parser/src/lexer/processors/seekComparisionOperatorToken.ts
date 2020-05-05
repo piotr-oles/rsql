@@ -1,4 +1,4 @@
-import { ComparisionOperatorSymbols, mapToCanonicalComparisionOperatorSymbol } from "@rsql/definitions";
+import { ComparisionOperatorSymbols } from "@rsql/definitions";
 import { createOperatorToken, OperatorToken } from "../Token";
 import { SeekProcessor } from "../LexerProcessor";
 import { createScanSymbol } from "./scanSymbol";
@@ -9,7 +9,7 @@ const seekComparisionOperatorToken: SeekProcessor<OperatorToken> = (context) => 
   const symbol = scanAnyComparisionOperatorSymbol(context);
 
   if (symbol) {
-    const token = createOperatorToken(mapToCanonicalComparisionOperatorSymbol(symbol), context.position);
+    const token = createOperatorToken(symbol, context.position);
     context.position += symbol.length;
 
     return token;

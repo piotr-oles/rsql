@@ -1,4 +1,4 @@
-import { isComparisionExpressionNode, isLogicExpressionNode, isSelectorNode, isValueNode } from "@rsql/ast";
+import { isComparisionNode, isLogicNode, isSelectorNode, isValueNode } from "@rsql/ast";
 import { parse } from "@rsql/parser";
 
 function assert(condition: unknown): asserts condition {
@@ -7,30 +7,39 @@ function assert(condition: unknown): asserts condition {
 
 describe("parse", () => {
   it.each([
-    ["==", "=="],
-    ["!=", "!="],
-    ["<=", "<="],
-    [">=", ">="],
-    ["<", "<"],
-    [">", ">"],
-    ["=in=", "=in="],
-    ["=out=", "=out="],
-    ["=le=", "<="],
-    ["=ge=", ">="],
-    ["=lt=", "<"],
-    ["=gt=", ">"],
-  ])("parses comparision expression for operator %p", (operator, canonicalOperator) => {
-    const rsql = `selector${operator}value`;
-    const comparision = parse(rsql);
-
-    assert(isComparisionExpressionNode(comparision));
-    assert(isSelectorNode(comparision.left));
-    assert(isValueNode(comparision.right));
-
-    expect(comparision.operator).toEqual(canonicalOperator);
-    expect(comparision.left.selector).toEqual("selector");
-    expect(comparision.right.value).toEqual("value");
+    ["", `Unexpected end in "". Cannot parse empty string.`],
+    ["   ", `Unexpected end in "   ". Cannot parse empty string.`],
+    ["\n\n", `Unexpected end in "\n\n". Cannot parse empty string.`],
+    ["\t  \n\r", `Unexpected end in "\t  \n\r". Cannot parse empty string.`],
+  ])("throws error for empty rsql '%p'", (rsql, expectedError) => {
+    expect(() => parse(rsql)).toThrowError(expectedError);
   });
+
+  it.each([
+    [undefined, 'The argument passed to the "parse" function should be a string, but undefined passed.'],
+    [null, 'The argument passed to the "parse" function should be a string, but null passed.'],
+    [10, 'The argument passed to the "parse" function should be a string, but number passed.'],
+    [{}, 'The argument passed to the "parse" function should be a string, but object passed.'],
+    [[], 'The argument passed to the "parse" function should be a string, but object passed.'],
+  ])("throws error for invalid rsql '%p'", (rsql, expectedError) => {
+    expect(() => parse((rsql as unknown) as string)).toThrowError(expectedError);
+  });
+
+  it.each(["==", "!=", "<=", ">=", "<", ">", "=in=", "=out=", "=le=", "=ge=", "=lt=", "=gt="])(
+    "parses comparision expression for operator %p",
+    (operator) => {
+      const rsql = `selector${operator}value`;
+      const comparision = parse(rsql);
+
+      assert(isComparisionNode(comparision));
+      assert(isSelectorNode(comparision.left));
+      assert(isValueNode(comparision.right));
+
+      expect(comparision.operator).toEqual(operator);
+      expect(comparision.left.selector).toEqual("selector");
+      expect(comparision.right.value).toEqual("value");
+    }
+  );
 
   it('throws exception for comparision operator typo "="', () => {
     expect(() => parse("selector=value")).toThrowError("Unexpected character '=' at position 9 in \"selector=value\"");
@@ -42,7 +51,7 @@ describe("parse", () => {
       const rsql = `${selector}==value`;
       const comparision = parse(rsql);
 
-      assert(isComparisionExpressionNode(comparision));
+      assert(isComparisionNode(comparision));
       assert(isSelectorNode(comparision.left));
       assert(isValueNode(comparision.right));
 
@@ -71,8 +80,8 @@ describe("parse", () => {
     ["ill;ness", `Unexpected character ';' at position 4 in "ill;ness==value"`],
     ["ill,ness", `Unexpected character ',' at position 4 in "ill,ness==value"`],
     ["ill=ness", `Unexpected character '=' at position 4 in "ill=ness==value`],
-    ["ill<ness", `Unexpected character '==' at position 9 in "ill<ness==value"`],
-    ["ill>ness", `Unexpected character '==' at position 9 in "ill>ness==value"`],
+    ["ill<ness", `Unexpected string '==' at position 9 in "ill<ness==value"`],
+    ["ill>ness", `Unexpected string '==' at position 9 in "ill>ness==value"`],
     ["ill!ness", `Unexpected character '!' at position 4 in "ill!ness==value`],
     ["ill~ness", `Unexpected character '~' at position 4 in "ill~ness==value`],
   ])('throws error for selector with reserved char "%p"', (selector, error) => {
@@ -80,14 +89,14 @@ describe("parse", () => {
   });
 
   it("throws exception for empty selector", () => {
-    expect(() => parse("==value")).toThrowError(`Unexpected character '==' at position 1 in "==value"`);
+    expect(() => parse("==value")).toThrowError(`Unexpected string '==' at position 1 in "==value"`);
   });
 
   it.each(["«Allons-y»", "h@llo", "*star*", "čes*ký", "42", "0.15", "3:15"])('parses unquoted value "%p"', (value) => {
     const rsql = `selector==${value}`;
     const comparision = parse(rsql);
 
-    assert(isComparisionExpressionNode(comparision));
+    assert(isComparisionNode(comparision));
     assert(isSelectorNode(comparision.left));
     assert(isValueNode(comparision.right));
 
@@ -124,7 +133,7 @@ describe("parse", () => {
   });
 
   it("throws an error for empty selector", () => {
-    expect(() => parse("==value")).toThrowError(`Unexpected character '==' at position 1 in "==value"`);
+    expect(() => parse("==value")).toThrowError(`Unexpected string '==' at position 1 in "==value"`);
   });
 
   it.each(['"hi there!"', "'Pěkný den!'", '"Flynn\'s *"', "\"o)'O'(o\"", '"6*7=42"', '""'])(
@@ -133,7 +142,7 @@ describe("parse", () => {
       const rsql = `selector==${value}`;
       const comparision = parse(rsql);
 
-      assert(isComparisionExpressionNode(comparision));
+      assert(isComparisionNode(comparision));
       assert(isSelectorNode(comparision.left));
       assert(isValueNode(comparision.right));
 
@@ -158,7 +167,7 @@ describe("parse", () => {
     const rsql = `selector==${value}`;
     const comparision = parse(rsql);
 
-    assert(isComparisionExpressionNode(comparision));
+    assert(isComparisionNode(comparision));
     assert(isSelectorNode(comparision.left));
     assert(isValueNode(comparision.right));
 
@@ -182,7 +191,7 @@ describe("parse", () => {
     const rsql = `selector=in=(${values.join(",")})`;
     const comparision = parse(rsql);
 
-    assert(isComparisionExpressionNode(comparision));
+    assert(isComparisionNode(comparision));
     assert(isSelectorNode(comparision.left));
     assert(isValueNode(comparision.right));
 
@@ -198,16 +207,16 @@ describe("parse", () => {
   it.each([
     [",", ","],
     [";", ";"],
-    [" and ", ";"],
-    [" or ", ","],
-  ])('parses logical operator "%p"', (operator, canonicalOperator) => {
-    const rsql = `selector1==value1${operator}selector2!=value2`;
+    [" and ", "and"],
+    [" or ", "or"],
+  ])('parses logic operator "%p"', (fragment, operator) => {
+    const rsql = `selector1==value1${fragment}selector2!=value2`;
     const logic = parse(rsql);
 
-    assert(isLogicExpressionNode(logic));
-    assert(isComparisionExpressionNode(logic.left));
-    expect(logic.operator).toEqual(canonicalOperator);
-    assert(isComparisionExpressionNode(logic.right));
+    assert(isLogicNode(logic));
+    assert(isComparisionNode(logic.left));
+    expect(logic.operator).toEqual(operator);
+    assert(isComparisionNode(logic.right));
 
     // left comparision
     assert(isSelectorNode(logic.left.left));
@@ -222,6 +231,36 @@ describe("parse", () => {
     expect(logic.right.operator).toEqual("!=");
     assert(isValueNode(logic.right.right));
     expect(logic.right.right.value).toEqual("value2");
+  });
+
+  it("doesn't misinterpret selector as logic operator", () => {
+    const rsql = `and==2 and or>3`;
+    const logic = parse(rsql);
+
+    assert(isLogicNode(logic));
+    assert(isComparisionNode(logic.left));
+    expect(logic.operator).toEqual("and");
+    assert(isComparisionNode(logic.right));
+
+    // left comparision
+    assert(isSelectorNode(logic.left.left));
+    expect(logic.left.left.selector).toEqual("and");
+    expect(logic.left.operator).toEqual("==");
+    assert(isValueNode(logic.left.right));
+    expect(logic.left.right.value).toEqual("2");
+
+    // right comparision
+    assert(isSelectorNode(logic.right.left));
+    expect(logic.right.left.selector).toEqual("or");
+    expect(logic.right.operator).toEqual(">");
+    assert(isValueNode(logic.right.right));
+    expect(logic.right.right.value).toEqual("3");
+  });
+
+  it("reports proper error for verbose operators", () => {
+    expect(() => parse("selector==value and and selector==value")).toThrowError(
+      "Unexpected string 'and' at position 21 in \"selector==value and and selector==value\""
+    );
   });
 
   it.each(["s0==v0;s1==v1;s2==v2", "s0==v0,s1=out=(v10,v11),s2==v2", "s0==v0,s1==v1;s2==v2,s3==v3"])(

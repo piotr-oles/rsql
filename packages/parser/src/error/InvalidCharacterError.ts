@@ -1,4 +1,6 @@
-class InvalidCharacterError extends Error {
+import ParsingError from "./ParsingError";
+
+class InvalidCharacterError extends ParsingError {
   static createForUnexpectedCharacter(position: number, source: string): InvalidCharacterError {
     const character = source[position];
 
@@ -21,11 +23,11 @@ class InvalidCharacterError extends Error {
     );
   }
 
-  constructor(message: string, readonly character: string, readonly position: number, readonly source: string) {
-    super(message);
+  constructor(message: string, readonly character: string, readonly position: number, source: string) {
+    super(message, source);
 
     Object.setPrototypeOf(this, InvalidCharacterError.prototype);
   }
 }
 
-export { InvalidCharacterError };
+export default InvalidCharacterError;
