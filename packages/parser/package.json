@@ -1,6 +1,6 @@
 {
   "name": "@rsql/parser",
-  "description": "RSQL parser",
+  "description": "RSQL Parser",
   "repository": "https://github.com/piotr-oles/rsql.git",
   "license": "MIT",
   "author": "Piotr Oleś <piotrek.oles@gmail.com>",
