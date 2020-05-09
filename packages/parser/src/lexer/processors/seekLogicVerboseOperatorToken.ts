@@ -1,16 +1,16 @@
-import { VerboseLogicOperatorSymbols } from "@rsql/definitions";
+import { VerboseLogicOperators } from "@rsql/ast";
 import { SeekProcessor } from "../LexerProcessor";
 import { createOperatorToken, OperatorToken } from "../Token";
 import { createScanNonReservedSymbol } from "./scanNonReservedSymbol";
 
-const scanLogicVerboseOperatorSymbol = createScanNonReservedSymbol(VerboseLogicOperatorSymbols);
+const scanLogicVerboseOperator = createScanNonReservedSymbol(VerboseLogicOperators);
 
 const seekLogicVerboseOperatorToken: SeekProcessor<OperatorToken> = (context) => {
-  const symbol = scanLogicVerboseOperatorSymbol(context);
+  const operator = scanLogicVerboseOperator(context);
 
-  if (symbol) {
-    const token = createOperatorToken(symbol, context.position);
-    context.position += symbol.length;
+  if (operator) {
+    const token = createOperatorToken(operator, context.position);
+    context.position += operator.length;
 
     return token;
   }

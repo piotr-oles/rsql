@@ -1,4 +1,4 @@
-import InvalidCharacterError from "../../error/InvalidCharacterError";
+import { createErrorForUnexpectedCharacter } from "../../Error";
 import { AnyToken } from "../Token";
 import seekComparisionOperatorToken from "./seekComparisionOperatorToken";
 import seekLogicCanonicalOperatorToken from "./seekLogicCanonicalOperatorToken";
@@ -61,7 +61,7 @@ const seekAnyToken: SeekProcessor<AnyToken> = (context) => {
   }
 
   if (!token) {
-    throw InvalidCharacterError.createForUnexpectedCharacter(context.position, context.buffer);
+    throw createErrorForUnexpectedCharacter(context.position, context.buffer);
   }
 
   return token;

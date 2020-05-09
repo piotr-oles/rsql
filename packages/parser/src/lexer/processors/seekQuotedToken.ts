@@ -1,4 +1,4 @@
-import InvalidCharacterError from "../../error/InvalidCharacterError";
+import { createErrorForUnclosedQuote } from "../../Error";
 import { createQuotedToken, QuotedToken } from "../Token";
 import { SeekProcessor } from "../LexerProcessor";
 
@@ -11,7 +11,7 @@ const seekQuotedToken: SeekProcessor<QuotedToken> = (context) => {
     endPosition = context.buffer.indexOf(quote, endPosition + 1);
 
     if (endPosition === -1) {
-      throw InvalidCharacterError.createForUnclosedQuote(context.position, context.buffer);
+      throw createErrorForUnclosedQuote(context.position, context.buffer);
     }
 
     // scan back for escape characters

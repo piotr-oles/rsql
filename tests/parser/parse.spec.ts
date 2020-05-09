@@ -16,11 +16,11 @@ describe("parse", () => {
   });
 
   it.each([
-    [undefined, 'The argument passed to the "parse" function should be a string, but undefined passed.'],
-    [null, 'The argument passed to the "parse" function should be a string, but null passed.'],
-    [10, 'The argument passed to the "parse" function should be a string, but number passed.'],
-    [{}, 'The argument passed to the "parse" function should be a string, but object passed.'],
-    [[], 'The argument passed to the "parse" function should be a string, but object passed.'],
+    [undefined, 'The argument passed to the "parse" function has to be a string, "undefined" passed.'],
+    [null, 'The argument passed to the "parse" function has to be a string, "null" passed.'],
+    [10, 'The argument passed to the "parse" function has to be a string, "10" passed.'],
+    [{}, 'The argument passed to the "parse" function has to be a string, "[object Object]" passed.'],
+    [[], 'The argument passed to the "parse" function has to be a string, "" passed.'],
   ])("throws error for invalid rsql '%p'", (rsql, expectedError) => {
     expect(() => parse((rsql as unknown) as string)).toThrowError(expectedError);
   });
@@ -62,34 +62,34 @@ describe("parse", () => {
   );
 
   it.each([
-    ['ill"', `Unclosed quote '"' at position 4 in "ill"==value"`],
-    ["ill'", `Unclosed quote ''' at position 4 in "ill'==value"`],
-    ["ill(", `Unexpected character '(' at position 4 in "ill(==value"`],
-    ["ill)", `Unexpected character ')' at position 4 in "ill)==value"`],
-    ["ill;", `Unexpected character ';' at position 4 in "ill;==value"`],
-    ["ill,", `Unexpected character ',' at position 4 in "ill,==value"`],
-    ["ill=", `Unexpected character '=' at position 6 in "ill===value"`],
-    ["ill<", `Unexpected character '=' at position 6 in "ill<==value`],
-    ["ill>", `Unexpected character '=' at position 6 in "ill>==value`],
-    ["ill!", `Unexpected character '=' at position 6 in "ill!==value`],
-    ["ill~", `Unexpected character '~' at position 4 in "ill~==value`],
-    ['ill"ness', `Unclosed quote '"' at position 4 in "ill"ness==value`],
-    ["ill'ness", `Unclosed quote ''' at position 4 in "ill'ness==value`],
-    ["ill(ness", `Unexpected character '(' at position 4 in "ill(ness==value"`],
-    ["ill)ness", `Unexpected character ')' at position 4 in "ill)ness==value"`],
-    ["ill;ness", `Unexpected character ';' at position 4 in "ill;ness==value"`],
-    ["ill,ness", `Unexpected character ',' at position 4 in "ill,ness==value"`],
-    ["ill=ness", `Unexpected character '=' at position 4 in "ill=ness==value`],
-    ["ill<ness", `Unexpected string '==' at position 9 in "ill<ness==value"`],
-    ["ill>ness", `Unexpected string '==' at position 9 in "ill>ness==value"`],
-    ["ill!ness", `Unexpected character '!' at position 4 in "ill!ness==value`],
-    ["ill~ness", `Unexpected character '~' at position 4 in "ill~ness==value`],
+    ['ill"', `Unclosed quote '"' at position 4 in "ill"==value".`],
+    ["ill'", `Unclosed quote ''' at position 4 in "ill'==value".`],
+    ["ill(", `Unexpected character '(' at position 4 in "ill(==value".`],
+    ["ill)", `Unexpected character ')' at position 4 in "ill)==value".`],
+    ["ill;", `Unexpected character ';' at position 4 in "ill;==value".`],
+    ["ill,", `Unexpected character ',' at position 4 in "ill,==value".`],
+    ["ill=", `Unexpected character '=' at position 6 in "ill===value".`],
+    ["ill<", `Unexpected character '=' at position 6 in "ill<==value".`],
+    ["ill>", `Unexpected character '=' at position 6 in "ill>==value".`],
+    ["ill!", `Unexpected character '=' at position 6 in "ill!==value".`],
+    ["ill~", `Unexpected character '~' at position 4 in "ill~==value".`],
+    ['ill"ness', `Unclosed quote '"' at position 4 in "ill"ness==value".`],
+    ["ill'ness", `Unclosed quote ''' at position 4 in "ill'ness==value".`],
+    ["ill(ness", `Unexpected character '(' at position 4 in "ill(ness==value".`],
+    ["ill)ness", `Unexpected character ')' at position 4 in "ill)ness==value".`],
+    ["ill;ness", `Unexpected character ';' at position 4 in "ill;ness==value".`],
+    ["ill,ness", `Unexpected character ',' at position 4 in "ill,ness==value".`],
+    ["ill=ness", `Unexpected character '=' at position 4 in "ill=ness==value".`],
+    ["ill<ness", `Unexpected string '==' at position 9 in "ill<ness==value".`],
+    ["ill>ness", `Unexpected string '==' at position 9 in "ill>ness==value".`],
+    ["ill!ness", `Unexpected character '!' at position 4 in "ill!ness==value".`],
+    ["ill~ness", `Unexpected character '~' at position 4 in "ill~ness==value".`],
   ])('throws error for selector with reserved char "%p"', (selector, error) => {
     expect(() => parse(`${selector}==value`)).toThrowError(error);
   });
 
   it("throws exception for empty selector", () => {
-    expect(() => parse("==value")).toThrowError(`Unexpected string '==' at position 1 in "==value"`);
+    expect(() => parse("==value")).toThrowError(`Unexpected string '==' at position 1 in "==value".`);
   });
 
   it.each(["«Allons-y»", "h@llo", "*star*", "čes*ký", "42", "0.15", "3:15"])('parses unquoted value "%p"', (value) => {
@@ -106,34 +106,34 @@ describe("parse", () => {
   });
 
   it.each([
-    ['ill"', `Unclosed quote '"' at position 14 in "selector==ill""`],
-    ["ill'", `Unclosed quote ''' at position 14 in "selector==ill'"`],
-    ["ill(", `Unexpected character '(' at position 14 in "selector==ill("`],
-    ["ill)", `Unexpected character ')' at position 14 in "selector==ill)"`],
-    ["ill;", `Unexpected end in "selector==ill;"`],
-    ["ill,", `Unexpected end in "selector==ill,"`],
-    ["ill=", `Unexpected character '=' at position 14 in "selector==ill="`],
-    ["ill<", `Unexpected character '<' at position 14 in "selector==ill<"`],
-    ["ill>", `Unexpected character '>' at position 14 in "selector==ill>"`],
-    ["ill!", `Unexpected character '!' at position 14 in "selector==ill!"`],
-    ["ill~", `Unexpected character '~' at position 14 in "selector==ill~"`],
-    ['ill"ness', `Unclosed quote '"' at position 14 in "selector==ill"ness"`],
-    ["ill'ness", `Unclosed quote ''' at position 14 in "selector==ill'ness"`],
-    ["ill(ness", `Unexpected character '(' at position 14 in "selector==ill(ness"`],
-    ["ill)ness", `Unexpected character ')' at position 14 in "selector==ill)ness"`],
-    ["ill;ness", `Unexpected end in "selector==ill;ness"`],
-    ["ill,ness", `Unexpected end in "selector==ill,ness"`],
-    ["ill=ness", `Unexpected character '=' at position 14 in "selector==ill=ness"`],
-    ["ill<ness", `Unexpected character '<' at position 14 in "selector==ill<ness"`],
-    ["ill>ness", `Unexpected character '>' at position 14 in "selector==ill>ness"`],
-    ["ill!ness", `Unexpected character '!' at position 14 in "selector==ill!ness"`],
-    ["ill~ness", `Unexpected character '~' at position 14 in "selector==ill~ness"`],
+    ['ill"', `Unclosed quote '"' at position 14 in "selector==ill"".`],
+    ["ill'", `Unclosed quote ''' at position 14 in "selector==ill'".`],
+    ["ill(", `Unexpected character '(' at position 14 in "selector==ill(".`],
+    ["ill)", `Unexpected character ')' at position 14 in "selector==ill)".`],
+    ["ill;", `Unexpected end in "selector==ill;".`],
+    ["ill,", `Unexpected end in "selector==ill,".`],
+    ["ill=", `Unexpected character '=' at position 14 in "selector==ill=".`],
+    ["ill<", `Unexpected character '<' at position 14 in "selector==ill<".`],
+    ["ill>", `Unexpected character '>' at position 14 in "selector==ill>".`],
+    ["ill!", `Unexpected character '!' at position 14 in "selector==ill!".`],
+    ["ill~", `Unexpected character '~' at position 14 in "selector==ill~".`],
+    ['ill"ness', `Unclosed quote '"' at position 14 in "selector==ill"ness".`],
+    ["ill'ness", `Unclosed quote ''' at position 14 in "selector==ill'ness".`],
+    ["ill(ness", `Unexpected character '(' at position 14 in "selector==ill(ness".`],
+    ["ill)ness", `Unexpected character ')' at position 14 in "selector==ill)ness".`],
+    ["ill;ness", `Unexpected end in "selector==ill;ness".`],
+    ["ill,ness", `Unexpected end in "selector==ill,ness".`],
+    ["ill=ness", `Unexpected character '=' at position 14 in "selector==ill=ness".`],
+    ["ill<ness", `Unexpected character '<' at position 14 in "selector==ill<ness".`],
+    ["ill>ness", `Unexpected character '>' at position 14 in "selector==ill>ness".`],
+    ["ill!ness", `Unexpected character '!' at position 14 in "selector==ill!ness".`],
+    ["ill~ness", `Unexpected character '~' at position 14 in "selector==ill~ness".`],
   ])('throws error for unquoted value with reserved char "%p"', (value, error) => {
     expect(() => parse(`selector==${value}`)).toThrowError(error);
   });
 
   it("throws an error for empty selector", () => {
-    expect(() => parse("==value")).toThrowError(`Unexpected string '==' at position 1 in "==value"`);
+    expect(() => parse("==value")).toThrowError(`Unexpected string '==' at position 1 in "==value".`);
   });
 
   it.each(['"hi there!"', "'Pěkný den!'", '"Flynn\'s *"', "\"o)'O'(o\"", '"6*7=42"', '""'])(
@@ -201,7 +201,7 @@ describe("parse", () => {
   });
 
   it("throws an error for empty value", () => {
-    expect(() => parse("selector=in=()")).toThrowError(`Unexpected character ')' at position 14 in "selector=in=()"`);
+    expect(() => parse("selector=in=()")).toThrowError(`Unexpected character ')' at position 14 in "selector=in=()".`);
   });
 
   it.each([
@@ -259,7 +259,7 @@ describe("parse", () => {
 
   it("reports proper error for verbose operators", () => {
     expect(() => parse("selector==value and and selector==value")).toThrowError(
-      "Unexpected string 'and' at position 21 in \"selector==value and and selector==value\""
+      "Unexpected string 'and' at position 21 in \"selector==value and and selector==value\"."
     );
   });
 
@@ -286,7 +286,7 @@ describe("parse", () => {
 
   it.each([
     ["(s0==a0;s1!=a1", 'Unexpected end in "(s0==a0;s1!=a1". Did you forget to close parenthesis at position 1?'],
-    ["s0==a0)", "Unexpected character ')' at position 7 in \"s0==a0)\""],
+    ["s0==a0)", "Unexpected character ')' at position 7 in \"s0==a0)\"."],
     [
       "s0==a;(s1=in=(b,c),s2!=d",
       'Unexpected end in "s0==a;(s1=in=(b,c),s2!=d". Did you forget to close parenthesis at position 5?',

@@ -21,8 +21,7 @@
     "node": ">= 8"
   },
   "dependencies": {
-    "@rsql/ast": "0.0.0",
-    "@rsql/definitions": "0.0.0"
+    "@rsql/ast": "0.0.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

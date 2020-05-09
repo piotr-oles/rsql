@@ -1,23 +1,18 @@
 import {
+  AND,
+  AND_VERBOSE,
+  isLogicOperator,
+  OR,
+  OR_VERBOSE,
+  ReservedChars,
   ComparisionNode,
+  ExpressionNode,
   isComparisionNode,
   isLogicNode,
-  isOrNode,
-  isSelectorNode,
-  isValueNode,
   LogicNode,
-  Node,
   SelectorNode,
   ValueNode,
 } from "@rsql/ast";
-import {
-  AND_VERBOSE,
-  InvalidArgumentError,
-  isAndOperatorSymbol,
-  OR_VERBOSE,
-  QuoteSymbol,
-  ReservedChars,
-} from "@rsql/definitions";
 
 function escapeQuotes(value: string, quote: string) {
   let escapedValue = value;
@@ -48,7 +43,7 @@ function escapeQuotes(value: string, quote: string) {
   return escapedValue;
 }
 
-function escapeValue(value: string, quote: QuoteSymbol = '"') {
+function escapeValue(value: string, quote: '"' | "'" = '"') {
   if (ReservedChars.some((reservedChar) => value.includes(reservedChar))) {
     return `${quote}${escapeQuotes(value, quote)}${quote}`;
   }
@@ -60,7 +55,7 @@ function emitSelector(node: SelectorNode) {
   return node.selector;
 }
 
-function emitValue(node: ValueNode, quote: QuoteSymbol = '"') {
+function emitValue(node: ValueNode, quote: '"' | "'" = '"') {
   return Array.isArray(node.value)
     ? `(${node.value.map((value) => escapeValue(value, quote)).join(",")})`
     : escapeValue(node.value, quote);
@@ -75,36 +70,29 @@ function emitLogic(node: LogicNode) {
   let right = emit(node.right);
 
   // handle operator precedence - as it's only the case for AND operator, we don't need a generic logic for that
-  if (isAndOperatorSymbol(node.operator)) {
-    if (isOrNode(node.left)) {
+  if (isLogicOperator(node.operator, AND)) {
+    if (isLogicNode(node.left, OR)) {
       left = `(${left})`;
     }
-    if (isOrNode(node.right)) {
+    if (isLogicNode(node.right, OR)) {
       right = `(${right})`;
     }
   }
 
+  // for verbose operator add space before and after operator
   const operator = node.operator === AND_VERBOSE || node.operator === OR_VERBOSE ? ` ${node.operator} ` : node.operator;
 
   return `${left}${operator}${right}`;
 }
 
-function emit(ast: Node): string {
-  if (isSelectorNode(ast)) {
-    return emitSelector(ast);
-  } else if (isValueNode(ast)) {
-    return emitValue(ast);
-  } else if (isComparisionNode(ast)) {
-    return emitComparision(ast);
-  } else if (isLogicNode(ast)) {
-    return emitLogic(ast);
+function emit(expression: ExpressionNode): string {
+  if (isComparisionNode(expression)) {
+    return emitComparision(expression);
+  } else if (isLogicNode(expression)) {
+    return emitLogic(expression);
   }
 
-  throw new InvalidArgumentError(
-    `The argument passed to the "emit" function should be a RSQL AST, but "${
-      ast === null ? "null" : typeof ast
-    }" passed.`
-  );
+  throw new TypeError(`The "expression" has to be a valid "ExpressionNode", ${String(expression)} passed.`);
 }
 
 export { emit };

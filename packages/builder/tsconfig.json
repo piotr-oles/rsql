@@ -5,6 +5,6 @@
     "rootDir": "./src",
     "outDir": "./lib"
   },
-  "references": [{ "path": "../ast" }, { "path": "../definitions" }, { "path": "../emitter" }, { "path": "../parser" }],
+  "references": [{ "path": "../ast" }],
   "exclude": ["node_modules", "lib"]
 }

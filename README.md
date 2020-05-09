@@ -17,13 +17,12 @@
 This repository is a monorepo which means that it contains several packages.
 All packages are published on the [npm registry](https://www.npmjs.com/) under the `@rsql/` scope.
 
-| Package                                       | Version                                                                                                   | Size                                                              | Description                              |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------- |
-| [`@rsql/builder`](./packages/builder)         | [![npm](https://img.shields.io/npm/v/@rsql/builder)](https://www.npmjs.com/package/@rsql/builder)         | ![size](https://badgen.net/bundlephobia/minzip/@rsql/builder)     | High level API package                   |
-| [`@rsql/parser`](./packages/parser)           | [![npm](https://img.shields.io/npm/v/@rsql/parser)](https://www.npmjs.com/package/@rsql/parser)           | ![size](https://badgen.net/bundlephobia/minzip/@rsql/parser)      | RSQL parser `string => AST`              |
-| [`@rsql/emitter`](./packages/emitter)         | [![npm](https://img.shields.io/npm/v/@rsql/emitter)](https://www.npmjs.com/package/@rsql/emitter)         | ![size](https://badgen.net/bundlephobia/minzip/@rsql/emitter)     | RSQL emitter `AST => string`             |
-| [`@rsql/ast`](./packages/ast)                 | [![npm](https://img.shields.io/npm/v/@rsql/ast)](https://www.npmjs.com/package/@rsql/ast)                 | ![size](https://badgen.net/bundlephobia/minzip/@rsql/ast)         | RSQL AST definitions (low level API)     |
-| [`@rsql/definitions`](./packages/definitions) | [![npm](https://img.shields.io/npm/v/@rsql/definitions)](https://www.npmjs.com/package/@rsql/definitions) | ![size](https://badgen.net/bundlephobia/minzip/@rsql/definitions) | RSQL Symbols definitions (low level API) |
+| Package                               | Version                                                                                           | Size                                                          | Description                        |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ---------------------------------- |
+| [`@rsql/builder`](./packages/builder) | [![npm](https://img.shields.io/npm/v/@rsql/builder)](https://www.npmjs.com/package/@rsql/builder) | ![size](https://badgen.net/bundlephobia/minzip/@rsql/builder) | Simple API for building RSQL       |
+| [`@rsql/parser`](./packages/parser)   | [![npm](https://img.shields.io/npm/v/@rsql/parser)](https://www.npmjs.com/package/@rsql/parser)   | ![size](https://badgen.net/bundlephobia/minzip/@rsql/parser)  | RSQL parser `string => AST`        |
+| [`@rsql/emitter`](./packages/emitter) | [![npm](https://img.shields.io/npm/v/@rsql/emitter)](https://www.npmjs.com/package/@rsql/emitter) | ![size](https://badgen.net/bundlephobia/minzip/@rsql/emitter) | RSQL emitter `AST => string`       |
+| [`@rsql/ast`](./packages/ast)         | [![npm](https://img.shields.io/npm/v/@rsql/ast)](https://www.npmjs.com/package/@rsql/ast)         | ![size](https://badgen.net/bundlephobia/minzip/@rsql/ast)     | RSQL AST definitions and functions |
 
 > Each package contains more detailed documentation. To learn more, click on the links above.
 
@@ -48,21 +47,26 @@ yarn add @rsql/builder
 
 ## Example
 
+The following example is taken from a real application.
+It's a complex one, but presents different features in a one place.
+
 ```typescript
 import builder from "@rsql/builder";
 import {
+  AND,
+  OR,
+  GE,
+  GT,
+  LE,
+  LT,
   isLogicNode,
   isComparisionNode,
   getSelector,
   getValue,
-  isGeNode,
-  isGtNode,
-  isLeNode,
-  isLtNode,
-  isAndNode,
-  isOrNode,
   ExpressionNode,
 } from "@rsql/ast";
+import { emit } from "@rsql/emitter";
+import { parse } from "@rsql/parser";
 
 /**
  * We are building date filter which works in 4 different modes
@@ -110,12 +114,12 @@ function decodeDateFilter(key: string, expression: ExpressionNode): DateFilter |
     const timestamp = Array.isArray(value) ? NaN : Number(value);
 
     if (Number.isFinite(timestamp)) {
-      if (isGeNode(expression) || isGtNode(expression)) {
+      if (isComparisionNode(expression, GE) || isComparisionNode(expression, GT)) {
         return {
           mode: "from",
           value: new Date(timestamp),
         };
-      } else if (isLeNode(expression) || isLtNode(expression)) {
+      } else if (isComparisionNode(expression, LE) || isComparisionNode(expression, LT)) {
         return {
           mode: "to",
           value: new Date(timestamp),
@@ -139,21 +143,21 @@ function decodeDateFilter(key: string, expression: ExpressionNode): DateFilter |
       if (Number.isFinite(timestamp)) {
         const date = new Date(timestamp);
 
-        if (isGeNode(comparision) || isGtNode(comparision)) {
+        if (isComparisionNode(comparision, GE) || isComparisionNode(comparision, GT)) {
           range[0] = date;
-        } else if (isLeNode(comparision) || isLtNode(comparision)) {
+        } else if (isComparisionNode(comparision, LE) || isComparisionNode(comparision, LT)) {
           range[1] = date;
         }
       }
     });
 
     if (range.length === 2) {
-      if (range[0] <= range[1] && isAndNode(expression)) {
+      if (range[0] <= range[1] && isLogicNode(expression, AND)) {
         return {
           mode: "between",
           value: [range[0], range[1]],
         };
-      } else if (range[0] > range[1] && isOrNode(expression)) {
+      } else if (range[0] > range[1] && isLogicNode(expression, OR)) {
         return {
           mode: "exclude",
           value: [range[1], range[0]],
@@ -165,7 +169,7 @@ function decodeDateFilter(key: string, expression: ExpressionNode): DateFilter |
 
 // test decoding
 {
-  const expression = builder.parse("updatedAt<1588880606434,updatedAt>1588880746326");
+  const expression = parse("updatedAt<1588880606434,updatedAt>1588880746326");
   const filter = decodeDateFilter("updatedAt", expression);
   console.log(filter);
   // { mode: "exclude", value: ["2020-05-07T19:43:26.434Z", "2020-05-07T19:45:46.326Z"] }
@@ -178,7 +182,7 @@ function decodeDateFilter(key: string, expression: ExpressionNode): DateFilter |
     value: new Date("2020-05-07T19:47:08.507"),
   };
   const expression = encodeDateFilter("updatedAt", filter);
-  const rsql = expression ? builder.emit(expression) : undefined;
+  const rsql = expression ? emit(expression) : undefined;
   console.log(rsql);
   // updatedAt>=1588873628507
 }

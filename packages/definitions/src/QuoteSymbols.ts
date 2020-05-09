@@ -1,3 +1,0 @@
-type QuoteSymbol = "'" | '"';
-
-export { QuoteSymbol };

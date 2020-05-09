@@ -1,18 +1,16 @@
 import {
   AND,
-  ComparisionOperatorSymbol,
+  ComparisionOperator,
   EQ,
   GE,
   GT,
   IN,
-  InvalidArgumentError,
   LE,
+  LogicOperator,
   LT,
   NEQ,
   OR,
   OUT,
-} from "@rsql/definitions";
-import {
   createSelectorNode,
   createValueNode,
   createComparisionNode,
@@ -20,12 +18,10 @@ import {
   ComparisionNode,
   ExpressionNode,
 } from "@rsql/ast";
-import { emit } from "@rsql/emitter";
-import { parse } from "@rsql/parser";
 
 function comparision(
   selector: string,
-  operator: ComparisionOperatorSymbol,
+  operator: ComparisionOperator,
   value: string | number | (string | number)[]
 ): ComparisionNode {
   return createComparisionNode(
@@ -60,49 +56,32 @@ function gt(selector: string, value: string | number): ComparisionNode {
 }
 
 function in_(selector: string, values: (string | number)[]): ComparisionNode {
-  if (values.length === 0) {
-    throw new InvalidArgumentError('The "values" passed to the "in" expression cannot be an empty array.');
-  }
-
   return comparision(selector, IN, values);
 }
 
 function out(selector: string, values: (string | number)[]): ComparisionNode {
-  if (values.length === 0) {
-    throw new InvalidArgumentError('The "values" passed to the "out" expression cannot be an empty array.');
-  }
-
   return comparision(selector, OUT, values);
 }
 
-function and(leftExpression: ExpressionNode, ...expressions: ExpressionNode[]): ExpressionNode;
-function and(...expressions: ExpressionNode[]): ExpressionNode | undefined;
-function and(...expressions: ExpressionNode[]): ExpressionNode | undefined {
-  const [leftExpression, ...rightExpressions] = expressions;
-
-  if (!leftExpression) {
-    return undefined;
+function logic(expressions: ExpressionNode[], operator: LogicOperator): ExpressionNode {
+  if (!expressions.length) {
+    throw new Error(`The logic expression builder requires at least one expression but none passed.`);
   }
 
-  return rightExpressions.reduce(
-    (leftExpression, rightExpression) => createLogicNode(leftExpression, AND, rightExpression),
-    leftExpression
-  );
+  return expressions
+    .slice(1)
+    .reduce(
+      (leftExpression, rightExpression) => createLogicNode(leftExpression, operator, rightExpression),
+      expressions[0]
+    );
 }
 
-function or(leftExpression: ExpressionNode, ...expressions: ExpressionNode[]): ExpressionNode;
-function or(...expressions: ExpressionNode[]): ExpressionNode | undefined;
-function or(...expressions: ExpressionNode[]): ExpressionNode | undefined {
-  const [leftExpression, ...rightExpressions] = expressions;
+function and(...expressions: ExpressionNode[]): ExpressionNode {
+  return logic(expressions, AND);
+}
 
-  if (!leftExpression) {
-    return undefined;
-  }
-
-  return rightExpressions.reduce(
-    (leftExpression, rightExpression) => createLogicNode(leftExpression, OR, rightExpression),
-    leftExpression
-  );
+function or(...expressions: ExpressionNode[]): ExpressionNode {
+  return logic(expressions, OR);
 }
 
 const builder = {
@@ -115,10 +94,9 @@ const builder = {
   gt,
   in: in_,
   out,
+  logic,
   and,
   or,
-  emit,
-  parse,
 };
 
 export default builder;

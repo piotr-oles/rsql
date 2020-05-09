@@ -18,7 +18,7 @@ import {
   ExpressionNode,
 } from "@rsql/ast";
 
-describe("AST", () => {
+describe("Node", () => {
   it("exports node factories", () => {
     expect(createSelectorNode).toBeInstanceOf(Function);
     expect(createValueNode).toBeInstanceOf(Function);
@@ -58,11 +58,8 @@ describe("AST", () => {
   });
 
   it.each([
-    ["", 'The "selector" passed to the "createSelectorNode" function cannot be an empty string.'],
-    [
-      "test ",
-      'The "selector" passed to the "createSelectorNode" function contains reserved character \' \' at position 5 in "test "',
-    ],
+    ["", 'The "selector" cannot be an empty string.'],
+    ["test ", 'The "selector" contains reserved character \' \' at position 5 in "test "'],
   ])("throws an error for invalid selector input '%p'", (selector, error) => {
     expect(() => createSelectorNode(selector)).toThrowError(error);
     expect(() => createSelectorNode(selector, true)).not.toThrowError();
@@ -90,7 +87,7 @@ describe("AST", () => {
 
     expect(node.type).toEqual("VALUE");
     expect(node.value).toEqual(value);
-    expect(node.toString()).toEqual(`ValueNode("${value}")`);
+    expect(node.toString()).toEqual(`ValueNode(${JSON.stringify(value)})`);
   });
 
   it.each([
@@ -103,10 +100,10 @@ describe("AST", () => {
 
     expect(node.type).toEqual("VALUE");
     expect(node.value).toEqual(values);
-    expect(node.toString()).toEqual(`ValueNode(${values.map((value) => `"${value}"`).join(",")})`);
+    expect(node.toString()).toEqual(`ValueNode(${JSON.stringify(values)})`);
   });
 
-  it.each([[[], 'The "value" passed to the "createValueNode" function cannot be an empty array.']])(
+  it.each([[[], 'The "value" cannot be an empty array.']])(
     "throws an error for invalid value input",
     (value, error) => {
       expect(() => createValueNode(value)).toThrowError(error);
@@ -145,7 +142,7 @@ describe("AST", () => {
     expect(logic.right).toEqual(right);
     expect(logic.operator).toEqual(operator);
     expect(logic.toString()).toEqual(
-      `LogicNode(ComparisionNode(SelectorNode("selectorA"),==,ValueNode("valueA")),${operator},ComparisionNode(SelectorNode("selectorB"),=out=,ValueNode("valueB","valueC")))`
+      `LogicNode(ComparisionNode(SelectorNode("selectorA"),==,ValueNode("valueA")),${operator},ComparisionNode(SelectorNode("selectorB"),=out=,ValueNode(["valueB","valueC"])))`
     );
   });
 

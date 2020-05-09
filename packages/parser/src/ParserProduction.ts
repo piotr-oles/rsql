@@ -7,8 +7,9 @@ import {
   ExpressionNode,
   SelectorNode,
   ValueNode,
+  ComparisionOperator,
+  LogicOperator,
 } from "@rsql/ast";
-import { ComparisionOperatorSymbol, LogicOperatorSymbol } from "@rsql/definitions";
 import {
   AnyToken,
   isOpenParenthesisToken,
@@ -64,7 +65,7 @@ const comparisionExpressionProduction: ParserProduction = (stack) => {
 
   return {
     consumed: 3,
-    produced: createComparisionNode(selector, operator.value as ComparisionOperatorSymbol, value, true),
+    produced: createComparisionNode(selector, operator.value as ComparisionOperator, value, true),
   };
 };
 
@@ -75,7 +76,7 @@ const logicalExpressionProduction: ParserProduction = (stack) => {
 
   return {
     consumed: 3,
-    produced: createLogicNode(left, operator.value as LogicOperatorSymbol, right, true),
+    produced: createLogicNode(left, operator.value as LogicOperator, right, true),
   };
 };
 

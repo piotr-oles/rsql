@@ -5,6 +5,5 @@
     "rootDir": "./src",
     "outDir": "./lib"
   },
-  "references": [{ "path": "../definitions" }],
   "exclude": ["node_modules", "lib"]
 }

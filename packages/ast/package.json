@@ -1,6 +1,6 @@
 {
   "name": "@rsql/ast",
-  "description": "RSQL Abstract Syntax Tree",
+  "description": "RSQL AST definitions and functions",
   "repository": "https://github.com/piotr-oles/rsql.git",
   "license": "MIT",
   "author": "Piotr Oleś <piotrek.oles@gmail.com>",
@@ -19,9 +19,6 @@
   },
   "engines": {
     "node": ">= 8"
-  },
-  "dependencies": {
-    "@rsql/definitions": "0.0.0"
   },
   "jest": {
     "preset": "ts-jest",
