@@ -1,12 +1,12 @@
-import { ComparisionOperators } from "@rsql/ast";
+import { ComparisonOperators } from "@rsql/ast";
 import { createOperatorToken, OperatorToken } from "../Token";
 import { SeekProcessor } from "../LexerProcessor";
 import { createScanSymbol } from "./scanSymbol";
 
-const scanAnyComparisionOperator = createScanSymbol(ComparisionOperators);
+const scanAnyComparisonOperator = createScanSymbol(ComparisonOperators);
 
-const seekComparisionOperatorToken: SeekProcessor<OperatorToken> = (context) => {
-  const operator = scanAnyComparisionOperator(context);
+const seekComparisonOperatorToken: SeekProcessor<OperatorToken> = (context) => {
+  const operator = scanAnyComparisonOperator(context);
 
   if (operator) {
     const token = createOperatorToken(operator, context.position);
@@ -18,4 +18,4 @@ const seekComparisionOperatorToken: SeekProcessor<OperatorToken> = (context) => 
   return null;
 };
 
-export default seekComparisionOperatorToken;
+export default seekComparisonOperatorToken;

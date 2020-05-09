@@ -1,4 +1,4 @@
-import { isComparisionNode, isLogicNode, isSelectorNode, isValueNode } from "@rsql/ast";
+import { isComparisonNode, isLogicNode, isSelectorNode, isValueNode } from "@rsql/ast";
 import { parse } from "@rsql/parser";
 
 function assert(condition: unknown): asserts condition {
@@ -26,22 +26,22 @@ describe("parse", () => {
   });
 
   it.each(["==", "!=", "<=", ">=", "<", ">", "=in=", "=out=", "=le=", "=ge=", "=lt=", "=gt="])(
-    "parses comparision expression for operator %p",
+    "parses comparison expression for operator %p",
     (operator) => {
       const rsql = `selector${operator}value`;
-      const comparision = parse(rsql);
+      const comparison = parse(rsql);
 
-      assert(isComparisionNode(comparision));
-      assert(isSelectorNode(comparision.left));
-      assert(isValueNode(comparision.right));
+      assert(isComparisonNode(comparison));
+      assert(isSelectorNode(comparison.left));
+      assert(isValueNode(comparison.right));
 
-      expect(comparision.operator).toEqual(operator);
-      expect(comparision.left.selector).toEqual("selector");
-      expect(comparision.right.value).toEqual("value");
+      expect(comparison.operator).toEqual(operator);
+      expect(comparison.left.selector).toEqual("selector");
+      expect(comparison.right.value).toEqual("value");
     }
   );
 
-  it('throws exception for comparision operator typo "="', () => {
+  it('throws exception for comparison operator typo "="', () => {
     expect(() => parse("selector=value")).toThrowError("Unexpected character '=' at position 9 in \"selector=value\"");
   });
 
@@ -49,15 +49,15 @@ describe("parse", () => {
     'parses selector "%p"',
     (selector) => {
       const rsql = `${selector}==value`;
-      const comparision = parse(rsql);
+      const comparison = parse(rsql);
 
-      assert(isComparisionNode(comparision));
-      assert(isSelectorNode(comparision.left));
-      assert(isValueNode(comparision.right));
+      assert(isComparisonNode(comparison));
+      assert(isSelectorNode(comparison.left));
+      assert(isValueNode(comparison.right));
 
-      expect(comparision.operator).toEqual("==");
-      expect(comparision.left.selector).toEqual(selector);
-      expect(comparision.right.value).toEqual("value");
+      expect(comparison.operator).toEqual("==");
+      expect(comparison.left.selector).toEqual(selector);
+      expect(comparison.right.value).toEqual("value");
     }
   );
 
@@ -79,7 +79,7 @@ describe("parse", () => {
     ["ill)ness", `Unexpected character ')' at position 4 in "ill)ness==value".`],
     ["ill;ness", `Unexpected character ';' at position 4 in "ill;ness==value".`],
     ["ill,ness", `Unexpected character ',' at position 4 in "ill,ness==value".`],
-    ["ill=ness", `Unexpected character '=' at position 4 in "ill=ness==value".`],
+    ["ill=ness", `Unexpected character '=' at position 10 in "ill=ness==value".`],
     ["ill<ness", `Unexpected string '==' at position 9 in "ill<ness==value".`],
     ["ill>ness", `Unexpected string '==' at position 9 in "ill>ness==value".`],
     ["ill!ness", `Unexpected character '!' at position 4 in "ill!ness==value".`],
@@ -94,15 +94,15 @@ describe("parse", () => {
 
   it.each(["«Allons-y»", "h@llo", "*star*", "čes*ký", "42", "0.15", "3:15"])('parses unquoted value "%p"', (value) => {
     const rsql = `selector==${value}`;
-    const comparision = parse(rsql);
+    const comparison = parse(rsql);
 
-    assert(isComparisionNode(comparision));
-    assert(isSelectorNode(comparision.left));
-    assert(isValueNode(comparision.right));
+    assert(isComparisonNode(comparison));
+    assert(isSelectorNode(comparison.left));
+    assert(isValueNode(comparison.right));
 
-    expect(comparision.operator).toEqual("==");
-    expect(comparision.left.selector).toEqual("selector");
-    expect(comparision.right.value).toEqual(value);
+    expect(comparison.operator).toEqual("==");
+    expect(comparison.left.selector).toEqual("selector");
+    expect(comparison.right.value).toEqual(value);
   });
 
   it.each([
@@ -140,15 +140,15 @@ describe("parse", () => {
     'parses quoted value with any chars "%p"',
     (value) => {
       const rsql = `selector==${value}`;
-      const comparision = parse(rsql);
+      const comparison = parse(rsql);
 
-      assert(isComparisionNode(comparision));
-      assert(isSelectorNode(comparision.left));
-      assert(isValueNode(comparision.right));
+      assert(isComparisonNode(comparison));
+      assert(isSelectorNode(comparison.left));
+      assert(isValueNode(comparison.right));
 
-      expect(comparision.operator).toEqual("==");
-      expect(comparision.left.selector).toEqual("selector");
-      expect(comparision.right.value).toEqual(value.slice(1, -1));
+      expect(comparison.operator).toEqual("==");
+      expect(comparison.left.selector).toEqual("selector");
+      expect(comparison.right.value).toEqual(value.slice(1, -1));
     }
   );
 
@@ -165,15 +165,15 @@ describe("parse", () => {
     '"\\\\"',
   ])('parses escaped quoted value "%p"', (value) => {
     const rsql = `selector==${value}`;
-    const comparision = parse(rsql);
+    const comparison = parse(rsql);
 
-    assert(isComparisionNode(comparision));
-    assert(isSelectorNode(comparision.left));
-    assert(isValueNode(comparision.right));
+    assert(isComparisonNode(comparison));
+    assert(isSelectorNode(comparison.left));
+    assert(isValueNode(comparison.right));
 
-    expect(comparision.operator).toEqual("==");
-    expect(comparision.left.selector).toEqual("selector");
-    expect(comparision.right.value).toEqual(value.slice(1, -1));
+    expect(comparison.operator).toEqual("==");
+    expect(comparison.left.selector).toEqual("selector");
+    expect(comparison.right.value).toEqual(value.slice(1, -1));
   });
 
   it.each([
@@ -189,15 +189,15 @@ describe("parse", () => {
     [['")o("'], [")o("]],
   ])('parses values group "%p"', (values, expectedValues) => {
     const rsql = `selector=in=(${values.join(",")})`;
-    const comparision = parse(rsql);
+    const comparison = parse(rsql);
 
-    assert(isComparisionNode(comparision));
-    assert(isSelectorNode(comparision.left));
-    assert(isValueNode(comparision.right));
+    assert(isComparisonNode(comparison));
+    assert(isSelectorNode(comparison.left));
+    assert(isValueNode(comparison.right));
 
-    expect(comparision.operator).toEqual("=in=");
-    expect(comparision.left.selector).toEqual("selector");
-    expect(comparision.right.value).toEqual(expectedValues);
+    expect(comparison.operator).toEqual("=in=");
+    expect(comparison.left.selector).toEqual("selector");
+    expect(comparison.right.value).toEqual(expectedValues);
   });
 
   it("throws an error for empty value", () => {
@@ -214,18 +214,18 @@ describe("parse", () => {
     const logic = parse(rsql);
 
     assert(isLogicNode(logic));
-    assert(isComparisionNode(logic.left));
+    assert(isComparisonNode(logic.left));
     expect(logic.operator).toEqual(operator);
-    assert(isComparisionNode(logic.right));
+    assert(isComparisonNode(logic.right));
 
-    // left comparision
+    // left comparison
     assert(isSelectorNode(logic.left.left));
     expect(logic.left.left.selector).toEqual("selector1");
     expect(logic.left.operator).toEqual("==");
     assert(isValueNode(logic.left.right));
     expect(logic.left.right.value).toEqual("value1");
 
-    // right comparision
+    // right comparison
     assert(isSelectorNode(logic.right.left));
     expect(logic.right.left.selector).toEqual("selector2");
     expect(logic.right.operator).toEqual("!=");
@@ -238,18 +238,18 @@ describe("parse", () => {
     const logic = parse(rsql);
 
     assert(isLogicNode(logic));
-    assert(isComparisionNode(logic.left));
+    assert(isComparisonNode(logic.left));
     expect(logic.operator).toEqual("and");
-    assert(isComparisionNode(logic.right));
+    assert(isComparisonNode(logic.right));
 
-    // left comparision
+    // left comparison
     assert(isSelectorNode(logic.left.left));
     expect(logic.left.left.selector).toEqual("and");
     expect(logic.left.operator).toEqual("==");
     assert(isValueNode(logic.left.right));
     expect(logic.left.right.value).toEqual("2");
 
-    // right comparision
+    // right comparison
     assert(isSelectorNode(logic.right.left));
     expect(logic.right.left.selector).toEqual("or");
     expect(logic.right.operator).toEqual(">");
@@ -293,5 +293,14 @@ describe("parse", () => {
     ],
   ])('throws an error for unclosed parenthesis "%p"', (rsql, error) => {
     expect(() => parse(rsql)).toThrowError(error);
+  });
+
+  it("parses custom operator", () => {
+    const ast = parse("genres=all=('thriller','sci-fi')");
+
+    assert(isComparisonNode(ast));
+    expect(ast.left.selector).toEqual("genres");
+    expect(ast.operator).toEqual("=all=");
+    expect(ast.right.value).toEqual(["thriller", "sci-fi"]);
   });
 });

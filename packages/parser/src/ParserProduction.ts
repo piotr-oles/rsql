@@ -1,13 +1,13 @@
 import {
   Node,
-  createComparisionNode,
+  createComparisonNode,
   createLogicNode,
   createSelectorNode,
   createValueNode,
   ExpressionNode,
   SelectorNode,
   ValueNode,
-  ComparisionOperator,
+  ComparisonOperator,
   LogicOperator,
 } from "@rsql/ast";
 import {
@@ -58,14 +58,14 @@ const multiValueProduction: ParserProduction = (stack) => {
   };
 };
 
-const comparisionExpressionProduction: ParserProduction = (stack) => {
+const comparisonExpressionProduction: ParserProduction = (stack) => {
   const selector = stack[stack.length - 3] as SelectorNode;
   const operator = stack[stack.length - 2] as OperatorToken;
   const value = stack[stack.length - 1] as ValueNode;
 
   return {
     consumed: 3,
-    produced: createComparisionNode(selector, operator.value as ComparisionOperator, value, true),
+    produced: createComparisonNode(selector, operator.value as ComparisonOperator, value, true),
   };
 };
 
@@ -94,7 +94,7 @@ export {
   selectorProduction,
   singleValueProduction,
   multiValueProduction,
-  comparisionExpressionProduction,
+  comparisonExpressionProduction,
   logicalExpressionProduction,
   groupExpressionProduction,
 };

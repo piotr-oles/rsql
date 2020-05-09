@@ -28,7 +28,7 @@ yarn add @rsql/ast
 ```typescript
 function createSelectorNode(selector): SelectorNode;
 function createValueNode(value): ValueNode;
-function createComparisionNode(selector, operator, value): ComparisionNode;
+function createComparisonNode(selector, operator, value): ComparisonNode;
 function createLogicNode(left, operator, right): LogicNode;
 ```
 
@@ -40,40 +40,40 @@ Creates new `Node`, can throw `InvalidArgumentError` for invalid arguments
 function isNode(candidate): boolean;
 function isSelectorNode(candidate): boolean;
 function isValueNode(candidate): boolean;
-function isComparisionNode(candidate, operator?): boolean;
+function isComparisonNode(candidate, operator?): boolean;
 function isLogicNode(candidate, operator?): boolean;
 function isExpressionNode(candidate): boolean;
 ```
 
 Checks if `candidate` is an instance of `Node`
 (actually it doesn't use `instanceof` operator as Nodes are simple objects - not instances of a class).
-Additionally we can pass `operator` argument to the `isComparisionNode`
+Additionally we can pass `operator` argument to the `isComparisonNode`
 and `isLogicNode` to check if node uses given operator. It automatically maps operators to canonical
-versions so for example `isComparisionNode(node, '=le=')` is same as `isComparisionNode(node, '<=')`.
+versions so for example `isComparisonNode(node, '=le=')` is same as `isComparisonNode(node, '<=')`.
 
-#### `getSelector(comparision): string`
+#### `getSelector(comparison): string`
 
-Returns selector for a given `ComparisionNode`.
-Can throw `InvalidArgumentError` if passed argument is not a `ComparisionNode`.
+Returns selector for a given `ComparisonNode`.
+Can throw `InvalidArgumentError` if passed argument is not a `ComparisonNode`.
 
-#### `getValue(comparision): string | string[]`
+#### `getValue(comparison): string | string[]`
 
-Returns value for a given `ComparisionNode`.
-Can throw `InvalidArgumentError` if passed argument is not a `ComparisionNode`.
+Returns value for a given `ComparisonNode`.
+Can throw `InvalidArgumentError` if passed argument is not a `ComparisonNode`.
 
-#### `getSingleValue(comparision): string`
+#### `getSingleValue(comparison): string`
 
-Returns single value for a given `ComparisionNode`.
-Can throw `InvalidArgumentError` if passed argument is not a `ComparisionNode` or
+Returns single value for a given `ComparisonNode`.
+Can throw `InvalidArgumentError` if passed argument is not a `ComparisonNode` or
 contains array instead of string.
 
-#### `getMultiValue(comparision): string[]`
+#### `getMultiValue(comparison): string[]`
 
-Returns multi value for a given `ComparisionNode`.
-Can throw `InvalidArgumentError` if passed argument is not a `ComparisionNode` or
+Returns multi value for a given `ComparisonNode`.
+Can throw `InvalidArgumentError` if passed argument is not a `ComparisonNode` or
 contains string instead of array.
 
-#### `ComparisionOperator`
+#### `ComparisonOperator`
 
 ```typescript
 const EQ = "==";
@@ -89,17 +89,17 @@ const GE_VERBOSE = "=ge=";
 const LT_VERBOSE = "=lt=";
 const GT_VERBOSE = "=gt=";
 
-const CanonicalComparisionOperators = [EQ, NEQ, LE, GE, LT, GT, IN, OUT];
-const VerboseComparisionOperators = [LE_VERBOSE, GE_VERBOSE, LT_VERBOSE, GT_VERBOSE];
-const ComparisionOperators = [...CanonicalComparisionOperators, ...VerboseComparisionOperators];
+const CanonicalComparisonOperators = [EQ, NEQ, LE, GE, LT, GT, IN, OUT];
+const VerboseComparisonOperators = [LE_VERBOSE, GE_VERBOSE, LT_VERBOSE, GT_VERBOSE];
+const ComparisonOperators = [...CanonicalComparisonOperators, ...VerboseComparisonOperators];
 
-function isComparisionOperator(candidate, operator?): boolean;
+function isComparisonOperator(candidate, operator?): boolean;
 ```
 
-Defines built-in comparision operators and `isComparisionOperator` function which checks if given candidate
-is a valid `ComparisionOperator`. Additionally you can pass `operator` argument which checks if
+Defines built-in comparison operators and `isComparisonOperator` function which checks if given candidate
+is a valid `ComparisonOperator`. Additionally you can pass `operator` argument which checks if
 given candidate equals operator from a semantic perspective - so for example
-`isComparisionOperator(candidate, LE)` will give you the same result as `isComparisionOperator(candidate, LE_VERBOSE)`
+`isComparisonOperator(candidate, LE)` will give you the same result as `isComparisonOperator(candidate, LE_VERBOSE)`
 
 #### `LogicOperator`
 
@@ -153,11 +153,11 @@ It's a base type for nodes which consists of two operands and one operator.
 Defines an object which, besides `Node` properties, contains `left` and `right` property which
 stores operands and `operator` property which stores an operator.
 
-#### `ComparisionNode`
+#### `ComparisonNode`
 
-Node which represents comparision expression. It's a constrained version of the `BinaryNode` where
+Node which represents comparison expression. It's a constrained version of the `BinaryNode` where
 `left` has to be `SelectorNode`, `right` has to be a `ValueNode` and `operator` has to be a
-`ComparisionOperator`.
+`ComparisonOperator`.
 
 #### `LogicNode`
 
@@ -166,11 +166,11 @@ Node which represents logic expression. It's a constrained version of the `Binar
 
 #### `ExpressionNode`
 
-It's a type union between `ComparisionNode` and `LogicNode`.
+It's a type union between `ComparisonNode` and `LogicNode`.
 
-#### `ComparisionOperator`
+#### `ComparisonOperator`
 
-It's a string literal type which defines built-in comparision operators.
+It's a string literal type which defines built-in comparison operators.
 
 #### `LogicOperator`
 

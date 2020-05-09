@@ -4,7 +4,7 @@ import lex from "./lexer/lex";
 import Token, {
   AnyToken,
   isCloseParenthesisToken,
-  isComparisionOperatorToken,
+  isComparisonOperatorToken,
   isEndToken,
   isAndOperatorToken,
   isOrOperatorToken,
@@ -36,7 +36,7 @@ import {
   TokenOperation,
 } from "./ParserOperation";
 import {
-  comparisionExpressionProduction,
+  comparisonExpressionProduction,
   groupExpressionProduction,
   logicalExpressionProduction,
   multiValueProduction,
@@ -49,7 +49,7 @@ const productions: ParserProduction[] = [
   /* 0 */ selectorProduction,
   /* 1 */ singleValueProduction,
   /* 2 */ multiValueProduction,
-  /* 3 */ comparisionExpressionProduction,
+  /* 3 */ comparisonExpressionProduction,
   /* 4 */ logicalExpressionProduction,
   /* 5 */ groupExpressionProduction,
 ];
@@ -59,7 +59,7 @@ const tokenMatchers = [
   /* 1 */ isCloseParenthesisToken, // C_PAREN
   /* 2 */ isUnquotedToken, // UNQUOTED
   /* 3 */ isQuotedToken, // QUOTED
-  /* 4 */ isComparisionOperatorToken, // C_OP
+  /* 4 */ isComparisonOperatorToken, // C_OP
   /* 5 */ isOrOperatorToken, // OR_OP
   /* 6 */ isAndOperatorToken, // AND_OP
   /* 7 */ isEndToken, // END
@@ -80,7 +80,7 @@ const table: ParserTable = [
   /* 0  */ [[push(0),   noop,      shift(8),  noop,      noop,      noop,      noop,      noop     ] , [goto(3),  noop,     goto(7)   ]], // INITIAL STATE
   /* 1  */ [[push(0),   noop,      shift(8),  noop,      noop,      noop,      noop,      noop     ] , [goto(3),  noop,     goto(12), ]], // INITIAL STATE [AFTER OR EXPRESSION]
   /* 2  */ [[push(0),   noop,      shift(8),  noop,      noop,      noop,      noop,      noop     ] , [goto(3),  noop,     goto(13), ]], // INITIAL STATE [AFTER AND EXPRESSION]
-  /* 3  */ [[noop,      noop,      noop,      noop,      shift(4),  noop,      noop,      noop     ] , [noop,     noop,     noop,     ]], // COMPARISION OPERATOR STATE
+  /* 3  */ [[noop,      noop,      noop,      noop,      shift(4),  noop,      noop,      noop     ] , [noop,     noop,     noop,     ]], // COMPARISON OPERATOR STATE
   /* 4  */ [[shift(5),  noop,      shift(9),  shift(9),  noop,      noop,      noop,      noop     ] , [noop,     goto(11), noop,     ]], // SINGLE/MULTI-VALUE STATE
   /* 5  */ [[noop,      noop,      shift(6),  shift(6),  noop,      noop,      noop,      noop     ] , [noop,     noop,     noop,     ]], // MULTI-VALUE STATE
   /* 6  */ [[noop,      shift(10), noop,      noop,      noop,      shift(5),  noop,      noop     ] , [noop,     noop,     noop,     ]], // MULTI-VALUE STATE
@@ -88,7 +88,7 @@ const table: ParserTable = [
   /* 8  */ [[noop,      noop,      noop,      noop,      reduce(0), noop,      noop,      noop     ] , [noop,     noop,     noop,     ]], // REDUCE SELECTOR
   /* 9  */ [[noop,      reduce(1), noop,      noop,      noop,      reduce(1), reduce(1), reduce(1)] , [noop,     noop,     noop,     ]], // REDUCE SINGLE-VALUE
   /* 10 */ [[noop,      reduce(2), noop,      noop,      noop,      reduce(2), reduce(2), reduce(2)] , [noop,     noop,     noop,     ]], // REDUCE MULTI-VALUE
-  /* 11 */ [[noop,      reduce(3), noop,      noop,      noop,      reduce(3), reduce(3), reduce(3)] , [noop,     noop,     noop,     ]], // REDUCE COMPARISION EXPRESSION
+  /* 11 */ [[noop,      reduce(3), noop,      noop,      noop,      reduce(3), reduce(3), reduce(3)] , [noop,     noop,     noop,     ]], // REDUCE COMPARISON EXPRESSION
   /* 12 */ [[noop,      reduce(4), noop,      noop,      noop,      reduce(4), shift(2),  reduce(4)] , [noop,     noop,     noop,     ]], // REDUCE LOGIC EXPRESSION [AFTER OR EXPRESSION]
   /* 13 */ [[noop,      reduce(4), noop,      noop,      noop,      reduce(4), reduce(4), reduce(4)] , [noop,     noop,     noop,     ]], // REDUCE LOGIC EXPRESSION [AFTER AND EXPRESSION]
   /* 14 */ [[noop,      pop(5),    noop,      noop,      noop,      pop(5),    pop(5),    pop(5)   ] , [noop,     noop,     noop,     ]], // REDUCE GROUP EXPRESSION

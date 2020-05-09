@@ -11,6 +11,11 @@
   "files": [
     "lib"
   ],
+  "keywords": [
+    "rsql",
+    "fiql",
+    "parser"
+  ],
   "scripts": {
     "clean": "rm -rf ./lib && rm -f tsconfig.tsbuildinfo",
     "compile": "tsc -b tsconfig.json",

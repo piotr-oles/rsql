@@ -1,6 +1,7 @@
 import { createErrorForUnexpectedCharacter } from "../../Error";
 import { AnyToken } from "../Token";
-import seekComparisionOperatorToken from "./seekComparisionOperatorToken";
+import seekComparisonCustomOperatorToken from "./seekComparisonCustomOperatorToken";
+import seekComparisonOperatorToken from "./seekComparisonOperatorToken";
 import seekLogicCanonicalOperatorToken from "./seekLogicCanonicalOperatorToken";
 import seekLogicVerboseOperatorToken from "./seekLogicVerboseOperatorToken";
 import { SeekProcessor } from "../LexerProcessor";
@@ -40,13 +41,16 @@ const seekAnyToken: SeekProcessor<AnyToken> = (context) => {
       token = seekLogicCanonicalOperatorToken(context);
       break;
 
-    // multi char symbols for comparision operator
+    // multi char symbols for comparison operator
     case "=":
     case "!":
     case "~":
     case "<":
     case ">":
-      token = seekComparisionOperatorToken(context);
+      token = seekComparisonOperatorToken(context);
+      if (!token && char === "=") {
+        token = seekComparisonCustomOperatorToken(context);
+      }
       break;
 
     // unreserved char

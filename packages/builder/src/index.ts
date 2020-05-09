@@ -1,6 +1,6 @@
 import {
   AND,
-  ComparisionOperator,
+  ComparisonOperator,
   EQ,
   GE,
   GT,
@@ -13,54 +13,54 @@ import {
   OUT,
   createSelectorNode,
   createValueNode,
-  createComparisionNode,
+  createComparisonNode,
   createLogicNode,
-  ComparisionNode,
+  ComparisonNode,
   ExpressionNode,
 } from "@rsql/ast";
 
-function comparision(
+function comparison(
   selector: string,
-  operator: ComparisionOperator,
+  operator: ComparisonOperator,
   value: string | number | (string | number)[]
-): ComparisionNode {
-  return createComparisionNode(
+): ComparisonNode {
+  return createComparisonNode(
     createSelectorNode(selector),
     operator,
     createValueNode(Array.isArray(value) ? value.map((singleValue) => String(singleValue)) : String(value))
   );
 }
 
-function eq(selector: string, value: string | number): ComparisionNode {
-  return comparision(selector, EQ, value);
+function eq(selector: string, value: string | number): ComparisonNode {
+  return comparison(selector, EQ, value);
 }
 
-function neq(selector: string, value: string | number): ComparisionNode {
-  return comparision(selector, NEQ, value);
+function neq(selector: string, value: string | number): ComparisonNode {
+  return comparison(selector, NEQ, value);
 }
 
-function le(selector: string, value: string | number): ComparisionNode {
-  return comparision(selector, LE, value);
+function le(selector: string, value: string | number): ComparisonNode {
+  return comparison(selector, LE, value);
 }
 
-function lt(selector: string, value: string | number): ComparisionNode {
-  return comparision(selector, LT, value);
+function lt(selector: string, value: string | number): ComparisonNode {
+  return comparison(selector, LT, value);
 }
 
-function ge(selector: string, value: string | number): ComparisionNode {
-  return comparision(selector, GE, value);
+function ge(selector: string, value: string | number): ComparisonNode {
+  return comparison(selector, GE, value);
 }
 
-function gt(selector: string, value: string | number): ComparisionNode {
-  return comparision(selector, GT, value);
+function gt(selector: string, value: string | number): ComparisonNode {
+  return comparison(selector, GT, value);
 }
 
-function in_(selector: string, values: (string | number)[]): ComparisionNode {
-  return comparision(selector, IN, values);
+function in_(selector: string, values: (string | number)[]): ComparisonNode {
+  return comparison(selector, IN, values);
 }
 
-function out(selector: string, values: (string | number)[]): ComparisionNode {
-  return comparision(selector, OUT, values);
+function out(selector: string, values: (string | number)[]): ComparisonNode {
+  return comparison(selector, OUT, values);
 }
 
 function logic(expressions: ExpressionNode[], operator: LogicOperator): ExpressionNode {
@@ -85,7 +85,7 @@ function or(...expressions: ExpressionNode[]): ExpressionNode {
 }
 
 const builder = {
-  comparision,
+  comparison,
   eq,
   neq,
   le,

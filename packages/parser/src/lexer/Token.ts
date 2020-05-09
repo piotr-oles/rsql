@@ -1,4 +1,4 @@
-import { ComparisionOperator, isLogicOperator, isComparisionOperator, LogicOperator, OR, AND } from "@rsql/ast";
+import { ComparisonOperator, isLogicOperator, isComparisonOperator, LogicOperator, OR, AND } from "@rsql/ast";
 
 const TokenType = {
   UNQUOTED: "UNQUOTED",
@@ -18,7 +18,7 @@ interface Token<TType extends string = string, TValue = any> {
 type UnquotedToken = Token<typeof TokenType.UNQUOTED, string>;
 type QuotedToken = Token<typeof TokenType.QUOTED, string>;
 type ParenthesisToken = Token<typeof TokenType.PARENTHESIS, "(" | ")">;
-type OperatorToken = Token<typeof TokenType.OPERATOR, ComparisionOperator | LogicOperator>;
+type OperatorToken = Token<typeof TokenType.OPERATOR, ComparisonOperator | LogicOperator>;
 type EndToken = Token<typeof TokenType.END, "END">;
 
 function createNamedToken<TToken extends Token>(token: TToken, toString: () => string): TToken {
@@ -65,7 +65,7 @@ function createParenthesisToken(value: "(" | ")", position: number): Parenthesis
   );
 }
 
-function createOperatorToken(value: ComparisionOperator | LogicOperator, position: number): OperatorToken {
+function createOperatorToken(value: ComparisonOperator | LogicOperator, position: number): OperatorToken {
   return createNamedToken(
     {
       type: TokenType.OPERATOR,
@@ -121,8 +121,8 @@ function isOperatorToken(candidate: object): candidate is OperatorToken {
   return isToken(candidate) && candidate.type === TokenType.OPERATOR;
 }
 
-function isComparisionOperatorToken(candidate: object): candidate is OperatorToken {
-  return isOperatorToken(candidate) && isComparisionOperator(candidate.value);
+function isComparisonOperatorToken(candidate: object): candidate is OperatorToken {
+  return isOperatorToken(candidate) && isComparisonOperator(candidate.value);
 }
 
 function isOrOperatorToken(candidate: object): candidate is OperatorToken {
@@ -151,7 +151,7 @@ export {
   isOpenParenthesisToken,
   isCloseParenthesisToken,
   isOperatorToken,
-  isComparisionOperatorToken,
+  isComparisonOperatorToken,
   isOrOperatorToken,
   isAndOperatorToken,
   isEndToken,

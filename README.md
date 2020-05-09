@@ -1,7 +1,7 @@
 <div align="center">
 
-<h1>RSQL</h1>
-<p>RSQL compiler and parser for Node.js and Browsers</p>
+<h1>RSQL / FIQL</h1>
+<p>RSQL emitter and parser for Node.js and Browsers</p>
 <p>⚠️ WARNING: This package is still in development - API may break compatibility without upgrading major version! ⚠️</p>
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
@@ -11,6 +11,17 @@
 [![auto release](https://img.shields.io/badge/release-auto.svg?colorA=888888&colorB=9B065A&label=auto)](https://github.com/intuit/auto)
 
 </div>
+
+> RSQL is a query language for parametrized filtering of entries in RESTful APIs. It’s based on FIQL
+> (Feed Item Query Language) – an URI-friendly syntax for expressing filters across the entries in an Atom Feed.
+> FIQL is great for use in URI; there are no unsafe characters, so URL encoding is not required. On the other side,
+> FIQL’s syntax is not very intuitive and URL encoding isn’t always that big deal, so RSQL also provides a friendlier
+> syntax for logical operators and some of the comparison operators.
+>
+> For example, you can query your resource like this: /movies?query=name=="Kill Bill";year=gt=2003 or
+> /movies?query=director.lastName==Nolan and year>=2000. See examples below.
+>
+> Source: https://github.com/jirutka/rsql-parser
 
 ## Packages
 
@@ -43,149 +54,69 @@ yarn add @rsql/builder
 - Works both in Node.js and Browser environment 👌
 - First class TypeScript support ✨
 - Highly modular code - use what you really need 📦
-- Well tested (well, in progress) 🧐
+
+## Grammar
+
+Based on the following specification: https://github.com/jirutka/rsql-parser#grammar-and-semantic
+
+## Custom operators
+
+By default RSQL defines 8 built-in comparison operators: `==`, `!=`, `<`, `>`, `<=`, `>=`, `=in=`, and `=out=`.
+You can define your custom operators - the only requirement is that they have to satisfy
+following regular expression: `/=[a-z]+=/` (FIQL operator). The parser will accept any comparison that contains
+a valid operator. Because of that, you don't have to register it. Instead, we suggest defining your grammar
+as a module. Here is an example how you can define `=all=` and `=empty=` operator:
+
+```typescript
+// src/rsql/ast.ts
+const ALL = "=all=";
+const EMPTY = "=empty=";
+
+export * from "@rsql/ast";
+export { ALL, EMPTY };
+
+// src/rsql/builder.ts
+import builder from "@rsql/builder";
+import { ALL, EMPTY } from "./ast";
+
+export default {
+  ...builder,
+  all(selector: string, values: string[]) {
+    return builder.comparison(selector, ALL, values);
+  },
+  empty(selector: string, empty: boolean) {
+    return builder.comparison(selector, EMPTY, empty ? "yes" : "no");
+  },
+};
+```
 
 ## Example
 
-The following example is taken from a real application.
-It's a complex one, but presents different features in a one place.
-
 ```typescript
-import builder from "@rsql/builder";
-import {
-  AND,
-  OR,
-  GE,
-  GT,
-  LE,
-  LT,
-  isLogicNode,
-  isComparisionNode,
-  getSelector,
-  getValue,
-  ExpressionNode,
-} from "@rsql/ast";
-import { emit } from "@rsql/emitter";
+// parsing
 import { parse } from "@rsql/parser";
+const expression = parse("year>=2003");
 
-/**
- * We are building date filter which works in 4 different modes
- */
-type DateSingleFilter = {
-  mode: "from" | "to";
-  value: Date;
-};
-type DateRangeFilter = {
-  mode: "between" | "exclude";
-  value: [Date, Date];
-};
-type DateFilter = DateSingleFilter | DateRangeFilter;
-
-/**
- * This function encodes DateFilter as a RSQL expression
- */
-function encodeDateFilter(key: string, filter: DateFilter): ExpressionNode | undefined {
-  switch (filter.mode) {
-    case "from":
-      return filter.value ? builder.ge(key, filter.value.valueOf()) : undefined;
-
-    case "to":
-      return filter.value ? builder.le(key, filter.value.valueOf()) : undefined;
-
-    case "between":
-      return Array.isArray(filter.value)
-        ? builder.and(builder.ge(key, filter.value[0].valueOf()), builder.le(key, filter.value[1].valueOf()))
-        : undefined;
-
-    case "exclude":
-      return Array.isArray(filter.value)
-        ? builder.or(builder.lt(key, filter.value[0].valueOf()), builder.gt(key, filter.value[1].valueOf()))
-        : undefined;
-  }
+// exploring
+import { isComparisonNode, getSelector, getValue } from "@rsql/ast";
+if (isComparisonNode(expression)) {
+  console.log(`Selector: ${getSelector(expression)}`);
+  // > Selector: year
+  console.log(`Operator: ${expression.operator}`);
+  // > Operator: >=
+  console.log(`Value: ${getValue(expression)}`);
+  // > Value: 2003
 }
 
-/**
- * This functions decodes RSQL expression to DateFilter
- */
-function decodeDateFilter(key: string, expression: ExpressionNode): DateFilter | undefined {
-  if (isComparisionNode(expression) && getSelector(expression) === key) {
-    // this is a potential case for "from" and "to" mode
-    const value = getValue(expression);
-    const timestamp = Array.isArray(value) ? NaN : Number(value);
+// building
+import builder from "@rsql/builder";
+const newExpression = builder.and(expression, builder.le("year", "2020"));
 
-    if (Number.isFinite(timestamp)) {
-      if (isComparisionNode(expression, GE) || isComparisionNode(expression, GT)) {
-        return {
-          mode: "from",
-          value: new Date(timestamp),
-        };
-      } else if (isComparisionNode(expression, LE) || isComparisionNode(expression, LT)) {
-        return {
-          mode: "to",
-          value: new Date(timestamp),
-        };
-      }
-    }
-  } else if (
-    isLogicNode(expression) &&
-    isComparisionNode(expression.left) &&
-    isComparisionNode(expression.right) &&
-    getSelector(expression.left) === key &&
-    getSelector(expression.right) === key
-  ) {
-    // this is a potential case for "between" and "exclude" mode
-    const range: Date[] = [];
-
-    [expression.left, expression.right].forEach((comparision) => {
-      const value = getValue(comparision);
-      const timestamp = Array.isArray(value) ? NaN : Number(value);
-
-      if (Number.isFinite(timestamp)) {
-        const date = new Date(timestamp);
-
-        if (isComparisionNode(comparision, GE) || isComparisionNode(comparision, GT)) {
-          range[0] = date;
-        } else if (isComparisionNode(comparision, LE) || isComparisionNode(comparision, LT)) {
-          range[1] = date;
-        }
-      }
-    });
-
-    if (range.length === 2) {
-      if (range[0] <= range[1] && isLogicNode(expression, AND)) {
-        return {
-          mode: "between",
-          value: [range[0], range[1]],
-        };
-      } else if (range[0] > range[1] && isLogicNode(expression, OR)) {
-        return {
-          mode: "exclude",
-          value: [range[1], range[0]],
-        };
-      }
-    }
-  }
-}
-
-// test decoding
-{
-  const expression = parse("updatedAt<1588880606434,updatedAt>1588880746326");
-  const filter = decodeDateFilter("updatedAt", expression);
-  console.log(filter);
-  // { mode: "exclude", value: ["2020-05-07T19:43:26.434Z", "2020-05-07T19:45:46.326Z"] }
-}
-
-// test encoding
-{
-  const filter: DateSingleFilter = {
-    mode: "from",
-    value: new Date("2020-05-07T19:47:08.507"),
-  };
-  const expression = encodeDateFilter("updatedAt", filter);
-  const rsql = expression ? emit(expression) : undefined;
-  console.log(rsql);
-  // updatedAt>=1588873628507
-}
+// emitting
+import { emit } from "@rsql/emitter";
+const rsql = emit(newExpression);
+console.log(`Emitted: ${rsql}`);
+// > Emitted: year>=2003;year<=2020
 ```
 
 ## License

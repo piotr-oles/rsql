@@ -5,9 +5,9 @@ import {
   OR,
   OR_VERBOSE,
   ReservedChars,
-  ComparisionNode,
+  ComparisonNode,
   ExpressionNode,
-  isComparisionNode,
+  isComparisonNode,
   isLogicNode,
   LogicNode,
   SelectorNode,
@@ -61,7 +61,7 @@ function emitValue(node: ValueNode, quote: '"' | "'" = '"') {
     : escapeValue(node.value, quote);
 }
 
-function emitComparision(node: ComparisionNode) {
+function emitComparison(node: ComparisonNode) {
   return `${emitSelector(node.left)}${node.operator}${emitValue(node.right)}`;
 }
 
@@ -86,8 +86,8 @@ function emitLogic(node: LogicNode) {
 }
 
 function emit(expression: ExpressionNode): string {
-  if (isComparisionNode(expression)) {
-    return emitComparision(expression);
+  if (isComparisonNode(expression)) {
+    return emitComparison(expression);
   } else if (isLogicNode(expression)) {
     return emitLogic(expression);
   }

@@ -1,11 +1,11 @@
 import { ReservedChars } from "./ReservedChars";
-import { isComparisionOperator, ComparisionOperator } from "./ComparisionOperator";
+import { isComparisonOperator, ComparisonOperator } from "./ComparisonOperator";
 import { isLogicOperator, LogicOperator } from "./LogicOperator";
 
 const NodeType = {
   SELECTOR: "SELECTOR",
   VALUE: "VALUE",
-  COMPARISION: "COMPARISION",
+  COMPARISON: "COMPARISON",
   LOGIC: "LOGIC",
 } as const;
 
@@ -32,9 +32,9 @@ interface BinaryNode<
   readonly right: TRight;
 }
 
-type ComparisionNode = BinaryNode<typeof NodeType.COMPARISION, SelectorNode, ComparisionOperator, ValueNode>;
+type ComparisonNode = BinaryNode<typeof NodeType.COMPARISON, SelectorNode, ComparisonOperator, ValueNode>;
 type LogicNode = BinaryNode<typeof NodeType.LOGIC, ExpressionNode, LogicOperator, ExpressionNode>;
-type ExpressionNode = ComparisionNode | LogicNode;
+type ExpressionNode = ComparisonNode | LogicNode;
 
 function createNamedNode<TNode extends Node>(node: TNode, toString: () => string): TNode {
   Object.defineProperty(node, "toString", {
@@ -95,12 +95,12 @@ function createValueNode(value: string | string[], skipChecks = false): ValueNod
   );
 }
 
-function createComparisionNode(
+function createComparisonNode(
   selector: SelectorNode,
-  operator: ComparisionOperator,
+  operator: ComparisonOperator,
   value: ValueNode,
   skipChecks = false
-): ComparisionNode {
+): ComparisonNode {
   if (!skipChecks) {
     if (!isSelectorNode(selector)) {
       throw new TypeError(`The "selector" has to be a "SelectorNode", "${String(selector)}" passed.`);
@@ -108,8 +108,8 @@ function createComparisionNode(
     if (typeof operator !== "string") {
       throw new TypeError(`The "operator" has to be a "SelectorNode", "${String(operator)}" passed.`);
     }
-    if (!isComparisionOperator(operator)) {
-      throw new TypeError(`The "operator" has to be a valid "ComparisionOperator", ${String(operator)} passed.`);
+    if (!isComparisonOperator(operator)) {
+      throw new TypeError(`The "operator" has to be a valid "ComparisonOperator", ${String(operator)} passed.`);
     }
     if (!isValueNode(value)) {
       throw new TypeError(`The "value" has to be a "ValueNode", "${String(value)}" passed.`);
@@ -118,12 +118,12 @@ function createComparisionNode(
 
   return createNamedNode(
     {
-      type: NodeType.COMPARISION,
+      type: NodeType.COMPARISON,
       left: selector,
       operator: operator,
       right: value,
     },
-    () => `ComparisionNode(${selector},${operator},${value})`
+    () => `ComparisonNode(${selector},${operator},${value})`
   );
 }
 
@@ -171,11 +171,11 @@ function isValueNode(candidate: unknown): candidate is ValueNode {
   return isNode(candidate) && candidate.type === NodeType.VALUE;
 }
 
-function isComparisionNode(candidate: unknown, operator?: ComparisionOperator): candidate is ComparisionNode {
+function isComparisonNode(candidate: unknown, operator?: ComparisonOperator): candidate is ComparisonNode {
   return (
     isNode(candidate) &&
-    candidate.type === NodeType.COMPARISION &&
-    (operator === undefined || isComparisionOperator((candidate as ComparisionNode).operator, operator))
+    candidate.type === NodeType.COMPARISON &&
+    (operator === undefined || isComparisonOperator((candidate as ComparisonNode).operator, operator))
   );
 }
 
@@ -188,41 +188,41 @@ function isLogicNode(candidate: unknown, operator?: LogicOperator): candidate is
 }
 
 function isExpressionNode(candidate: unknown): candidate is ExpressionNode {
-  return isComparisionNode(candidate) || isLogicNode(candidate);
+  return isComparisonNode(candidate) || isLogicNode(candidate);
 }
 
-function getSelector(comparision: ComparisionNode): string {
-  if (!isComparisionNode(comparision)) {
-    throw new TypeError(`The "comparision" has to be a valid "ComparisionNode", ${String(comparision)} passed.`);
+function getSelector(comparison: ComparisonNode): string {
+  if (!isComparisonNode(comparison)) {
+    throw new TypeError(`The "comparison" has to be a valid "ComparisonNode", ${String(comparison)} passed.`);
   }
 
-  return comparision.left.selector;
+  return comparison.left.selector;
 }
 
-function getValue(comparision: ComparisionNode): string | string[] {
-  if (!isComparisionNode(comparision)) {
-    throw new TypeError(`The "comparision" has to be a valid "ComparisionNode", ${String(comparision)} passed.`);
+function getValue(comparison: ComparisonNode): string | string[] {
+  if (!isComparisonNode(comparison)) {
+    throw new TypeError(`The "comparison" has to be a valid "ComparisonNode", ${String(comparison)} passed.`);
   }
 
-  return comparision.right.value;
+  return comparison.right.value;
 }
 
-function getSingleValue(comparision: ComparisionNode): string {
-  const value = getValue(comparision);
+function getSingleValue(comparison: ComparisonNode): string {
+  const value = getValue(comparison);
   if (Array.isArray(value)) {
     throw new Error(
-      'The "comparision" passed to the "getSingleValue" function has to contain string value, but contains an array.'
+      'The "comparison" passed to the "getSingleValue" function has to contain string value, but contains an array.'
     );
   }
 
   return value;
 }
 
-function getMultiValue(comparision: ComparisionNode): string[] {
-  const value = getValue(comparision);
+function getMultiValue(comparison: ComparisonNode): string[] {
+  const value = getValue(comparison);
   if (typeof value === "string") {
     throw new Error(
-      'The "comparision" passed to the "getMultiValue" function has to contain array value, but contains a single string.'
+      'The "comparison" passed to the "getMultiValue" function has to contain array value, but contains a single string.'
     );
   }
 
@@ -232,12 +232,12 @@ function getMultiValue(comparision: ComparisionNode): string[] {
 export {
   createSelectorNode,
   createValueNode,
-  createComparisionNode,
+  createComparisonNode,
   createLogicNode,
   isNode,
   isSelectorNode,
   isValueNode,
-  isComparisionNode,
+  isComparisonNode,
   isLogicNode,
   isExpressionNode,
   getSelector,
@@ -248,7 +248,7 @@ export {
   SelectorNode,
   ValueNode,
   BinaryNode,
-  ComparisionNode,
+  ComparisonNode,
   LogicNode,
   ExpressionNode,
 };

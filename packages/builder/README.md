@@ -23,32 +23,32 @@ yarn add @rsql/builder
 
 ## API
 
-#### `builder.comparision(selector, operator, value): ComparisionNode`
+#### `builder.comparison(selector, operator, value): ComparisonNode`
 
-Creates new `ComparisionNode` - similar to the `createComparisionNode` from the [`@rsql/ast`](../ast)
+Creates new `ComparisonNode` - similar to the `createComparisonNode` from the [`@rsql/ast`](../ast)
 but with simpler API (no need to create `SelectorNode` or `ValueNode` and accepts numbers as values)
 
-#### `builder.<operator>(selector, value): ComparisionNode`
+#### `builder.<operator>(selector, value): ComparisonNode`
 
 ```
-builder.eq(selector, value): ComparisionNode
-builder.neq(selector, value): ComparisionNode
-builder.le(selector, value): ComparisionNode
-builder.lt(selector, value): ComparisionNode
-builder.ge(selector, value): ComparisionNode
-builder.gt(selector, value): ComparisionNode
+builder.eq(selector, value): ComparisonNode
+builder.neq(selector, value): ComparisonNode
+builder.le(selector, value): ComparisonNode
+builder.lt(selector, value): ComparisonNode
+builder.ge(selector, value): ComparisonNode
+builder.gt(selector, value): ComparisonNode
 ```
 
-Creates new `ComparisionNode` with the predefined operator for single value.
+Creates new `ComparisonNode` with the predefined operator for single value.
 
-#### `builder.<operator>(selector, values): ComparisionNode`
+#### `builder.<operator>(selector, values): ComparisonNode`
 
 ```
-builder.in(selector, values): ComparisionNode
-builder.out(selector, values): ComparisionNode
+builder.in(selector, values): ComparisonNode
+builder.out(selector, values): ComparisonNode
 ```
 
-Creates new `ComparisionNode` with the predefined operator for multiple values.
+Creates new `ComparisonNode` with the predefined operator for multiple values.
 
 #### `builder.logic(expressions, operator): LogicNode`
 
