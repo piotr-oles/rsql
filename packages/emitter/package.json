@@ -1,28 +1,33 @@
 {
   "name": "@rsql/emitter",
-  "description": "RSQL emitter",
+  "description": "RSQL Emitter",
   "repository": "https://github.com/piotr-oles/rsql.git",
   "license": "MIT",
   "author": "Piotr Oleś <piotrek.oles@gmail.com>",
   "version": "0.0.0",
   "sideEffects": false,
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.umd.js",
   "files": [
-    "lib"
+    "dist"
+  ],
+  "keywords": [
+    "rsql",
+    "fiql",
+    "emitter"
   ],
   "scripts": {
-    "clean": "rm -rf ./lib && rm -f tsconfig.tsbuildinfo",
-    "compile": "tsc -b tsconfig.json",
-    "dev": "yarn compile --watch --preserveWatchOutput",
+    "clean": "rm -rf ./lib && rm -f tsconfig.tsbuildinfo && rm -rf ./dist",
+    "compile": "tsc -b tsconfig.json && rollup -c && dts-bundle --name \"@rsql/emitter\" --main lib/index.d.ts --out ../dist/index.d.ts",
     "build": "yarn clean && yarn compile"
   },
   "engines": {
     "node": ">= 8"
   },
   "dependencies": {
-    "@rsql/ast": "0.0.0",
-    "@rsql/definitions": "0.0.0"
+    "@rsql/ast": "0.0.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

@@ -3,7 +3,7 @@ import { emit } from "@rsql/emitter";
 
 describe("emit", () => {
   it.each(["==", "!=", "<=", ">=", "<", ">", "=in=", "=out=", "=le=", "=ge=", "=lt=", "=gt="])(
-    "emits comparision expression for operator %p",
+    "emits comparison expression for operator %p",
     (operator) => {
       const rsql = `selector${operator}value`;
       const ast = parse(rsql);

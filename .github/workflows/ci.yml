@@ -32,31 +32,25 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: ast
-          path: packages/ast/lib
+          path: packages/ast/dist
 
       - name: Upload @rsql/builder artifact
         uses: actions/upload-artifact@v1
         with:
           name: builder
-          path: packages/builder/lib
-
-      - name: Upload @rsql/definitions artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: definitions
-          path: packages/definitions/lib
+          path: packages/builder/dist
 
       - name: Upload @rsql/emitter artifact
         uses: actions/upload-artifact@v1
         with:
           name: emitter
-          path: packages/emitter/lib
+          path: packages/emitter/dist
 
       - name: Upload @rsql/parser artifact
         uses: actions/upload-artifact@v1
         with:
           name: parser
-          path: packages/parser/lib
+          path: packages/parser/dist
 
   test:
     runs-on: ${{ matrix.os }}
@@ -95,31 +89,25 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: ast
-          path: packages/ast/lib
+          path: packages/ast/dist
 
       - name: Download @rsql/builder artifact
         uses: actions/download-artifact@v1
         with:
           name: builder
-          path: packages/builder/lib
-
-      - name: Download @rsql/definitions artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: definitions
-          path: packages/definitions/lib
+          path: packages/builder/dist
 
       - name: Download @rsql/emitter artifact
         uses: actions/download-artifact@v1
         with:
           name: emitter
-          path: packages/emitter/lib
+          path: packages/emitter/dist
 
       - name: Download @rsql/parser artifact
         uses: actions/download-artifact@v1
         with:
           name: parser
-          path: packages/parser/lib
+          path: packages/parser/dist
 
       - name: Run tests
         run: yarn test
@@ -157,31 +145,25 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: ast
-          path: packages/ast/lib
+          path: packages/ast/dist
 
       - name: Download @rsql/builder artifact
         uses: actions/download-artifact@v1
         with:
           name: builder
-          path: packages/builder/lib
-
-      - name: Download @rsql/definitions artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: definitions
-          path: packages/definitions/lib
+          path: packages/builder/dist
 
       - name: Download @rsql/emitter artifact
         uses: actions/download-artifact@v1
         with:
           name: emitter
-          path: packages/emitter/lib
+          path: packages/emitter/dist
 
       - name: Download @rsql/parser artifact
         uses: actions/download-artifact@v1
         with:
           name: parser
-          path: packages/parser/lib
+          path: packages/parser/dist
 
       - name: Release
         env:

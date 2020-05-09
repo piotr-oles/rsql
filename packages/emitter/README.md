@@ -1,8 +1,8 @@
-<div align="center">
+# @rsql/emitter
 
-<h1>@rsql/emitter</h1>
-<p>RSQL emitter for Node.js and Browsers</p>
-<p>⚠️ WARNING: This package is still in development - API may break compatibility without upgrading major version! ⚠️</p>
+RSQL emitter for Node.js and Browsers
+
+⚠️ WARNING: This package is still in development - API may break compatibility without upgrading major version! ⚠️
 
 [![npm](https://img.shields.io/npm/v/@rsql/emitter)](https://www.npmjs.com/package/@rsql/emitter)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
@@ -10,8 +10,6 @@
 [![commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
 [![auto release](https://img.shields.io/badge/release-auto.svg?colorA=888888&colorB=9B065A&label=auto)](https://github.com/intuit/auto)
-
-</div>
 
 ## Installation
 
@@ -25,24 +23,11 @@ yarn add @rsql/emitter
 
 ## API
 
-#### `emit(ast: ExpressionNode): string`
+#### `emit(expression: ExpressionNode): string`
 
 Emits RSQL string from the Abstract Syntax Tree. It can throw the following errors:
 
-- `InvalidArgumentError` - in the case of invalid argument type passed to the `emit` function
-
-## Example
-
-```javascript
-import { emit } from "@rsql/emitter";
-import { parse } from "@rsql/parser";
-
-const ast = parse("user.name==admin");
-ast.right.value = "guest";
-
-console.log(emit(ast));
-// user.name==guest
-```
+- `TypeError` - in the case of invalid argument type passed to the `emit` function
 
 ## License
 
