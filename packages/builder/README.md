@@ -2,8 +2,6 @@
 
 API for building RSQL for Node.js and Browsers
 
-⚠️ WARNING: This package is still in development - API may break compatibility without upgrading major version! ⚠️
-
 [![npm](https://img.shields.io/npm/v/@rsql/builder)](https://www.npmjs.com/package/@rsql/builder)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
