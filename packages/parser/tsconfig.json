@@ -5,5 +5,5 @@
     "outDir": "./lib"
   },
   "references": [{ "path": "../ast" }],
-  "exclude": ["node_modules", "lib"]
+  "exclude": ["node_modules", "lib", "dist"]
 }
