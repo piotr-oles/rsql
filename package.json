@@ -12,7 +12,7 @@
   "scripts": {
     "postinstall": "lerna bootstrap",
     "build": "lerna run build",
-    "release": "auto shipit -vv",
+    "release": "auto shipit",
     "precommit": "lint-staged && yarn build && yarn test",
     "commit": "./node_modules/.bin/git-cz",
     "lint": "yarn eslint . --ext .js,.jsx,.ts,.tsx",
