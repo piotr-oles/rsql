@@ -1,15 +1,18 @@
 import {
-  ComparisionExpressionNode,
-  isComparisionExpressionNode,
-  isLogicExpressionNode,
-  isSelectorNode,
-  isValueNode,
-  LogicExpressionNode,
-  Node,
+  AND,
+  AND_VERBOSE,
+  isLogicOperator,
+  OR,
+  OR_VERBOSE,
+  ReservedChars,
+  ComparisonNode,
+  ExpressionNode,
+  isComparisonNode,
+  isLogicNode,
+  LogicNode,
   SelectorNode,
   ValueNode,
 } from "@rsql/ast";
-import { InvalidArgumentError, QuoteSymbol, ReservedChars } from "@rsql/definitions";
 
 function escapeQuotes(value: string, quote: string) {
   let escapedValue = value;
@@ -40,7 +43,7 @@ function escapeQuotes(value: string, quote: string) {
   return escapedValue;
 }
 
-function escapeValue(value: string, quote: QuoteSymbol = '"') {
+function escapeValue(value: string, quote: '"' | "'" = '"') {
   if (ReservedChars.some((reservedChar) => value.includes(reservedChar))) {
     return `${quote}${escapeQuotes(value, quote)}${quote}`;
   }
@@ -52,45 +55,44 @@ function emitSelector(node: SelectorNode) {
   return node.selector;
 }
 
-function emitValue(node: ValueNode, quote: QuoteSymbol = '"') {
+function emitValue(node: ValueNode, quote: '"' | "'" = '"') {
   return Array.isArray(node.value)
     ? `(${node.value.map((value) => escapeValue(value, quote)).join(",")})`
     : escapeValue(node.value, quote);
 }
 
-function emitComparisionExpression(node: ComparisionExpressionNode) {
+function emitComparison(node: ComparisonNode) {
   return `${emitSelector(node.left)}${node.operator}${emitValue(node.right)}`;
 }
 
-function emitLogicExpression(node: LogicExpressionNode) {
+function emitLogic(node: LogicNode) {
   let left = emit(node.left);
   let right = emit(node.right);
 
   // handle operator precedence - as it's only the case for AND operator, we don't need a generic logic for that
-  if (node.operator === ";") {
-    if (isLogicExpressionNode(node.left) && node.left.operator === ",") {
+  if (isLogicOperator(node.operator, AND)) {
+    if (isLogicNode(node.left, OR)) {
       left = `(${left})`;
     }
-    if (isLogicExpressionNode(node.right) && node.right.operator === ",") {
+    if (isLogicNode(node.right, OR)) {
       right = `(${right})`;
     }
   }
 
-  return `${left}${node.operator}${right}`;
+  // for verbose operator add space before and after operator
+  const operator = node.operator === AND_VERBOSE || node.operator === OR_VERBOSE ? ` ${node.operator} ` : node.operator;
+
+  return `${left}${operator}${right}`;
 }
 
-function emit(node: Node): string {
-  if (isSelectorNode(node)) {
-    return emitSelector(node);
-  } else if (isValueNode(node)) {
-    return emitValue(node);
-  } else if (isComparisionExpressionNode(node)) {
-    return emitComparisionExpression(node);
-  } else if (isLogicExpressionNode(node)) {
-    return emitLogicExpression(node);
+function emit(expression: ExpressionNode): string {
+  if (isComparisonNode(expression)) {
+    return emitComparison(expression);
+  } else if (isLogicNode(expression)) {
+    return emitLogic(expression);
   }
 
-  throw new InvalidArgumentError(`Unsupported node "${node}".`);
+  throw new TypeError(`The "expression" has to be a valid "ExpressionNode", ${String(expression)} passed.`);
 }
 
 export { emit };

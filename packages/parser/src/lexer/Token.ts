@@ -1,9 +1,4 @@
-import {
-  CanonicalComparisionOperatorSymbol,
-  CanonicalLogicOperatorSymbol,
-  isComparisionOperatorSymbol,
-  ParenthesisSymbol,
-} from "@rsql/definitions";
+import { ComparisonOperator, isLogicOperator, isComparisonOperator, LogicOperator, OR, AND } from "@rsql/ast";
 
 const TokenType = {
   UNQUOTED: "UNQUOTED",
@@ -22,11 +17,8 @@ interface Token<TType extends string = string, TValue = any> {
 
 type UnquotedToken = Token<typeof TokenType.UNQUOTED, string>;
 type QuotedToken = Token<typeof TokenType.QUOTED, string>;
-type ParenthesisToken = Token<typeof TokenType.PARENTHESIS, ParenthesisSymbol>;
-type OperatorToken = Token<
-  typeof TokenType.OPERATOR,
-  CanonicalComparisionOperatorSymbol | CanonicalLogicOperatorSymbol
->;
+type ParenthesisToken = Token<typeof TokenType.PARENTHESIS, "(" | ")">;
+type OperatorToken = Token<typeof TokenType.OPERATOR, ComparisonOperator | LogicOperator>;
 type EndToken = Token<typeof TokenType.END, "END">;
 
 function createNamedToken<TToken extends Token>(token: TToken, toString: () => string): TToken {
@@ -62,7 +54,7 @@ function createQuotedToken(value: string, position: number): QuotedToken {
   );
 }
 
-function createParenthesisToken(value: ParenthesisSymbol, position: number): ParenthesisToken {
+function createParenthesisToken(value: "(" | ")", position: number): ParenthesisToken {
   return createNamedToken(
     {
       type: TokenType.PARENTHESIS,
@@ -73,10 +65,7 @@ function createParenthesisToken(value: ParenthesisSymbol, position: number): Par
   );
 }
 
-function createOperatorToken(
-  value: CanonicalComparisionOperatorSymbol | CanonicalLogicOperatorSymbol,
-  position: number
-): OperatorToken {
+function createOperatorToken(value: ComparisonOperator | LogicOperator, position: number): OperatorToken {
   return createNamedToken(
     {
       type: TokenType.OPERATOR,
@@ -132,16 +121,16 @@ function isOperatorToken(candidate: object): candidate is OperatorToken {
   return isToken(candidate) && candidate.type === TokenType.OPERATOR;
 }
 
-function isComparisionOperatorToken(candidate: object): candidate is OperatorToken {
-  return isOperatorToken(candidate) && isComparisionOperatorSymbol(candidate.value);
+function isComparisonOperatorToken(candidate: object): candidate is OperatorToken {
+  return isOperatorToken(candidate) && isComparisonOperator(candidate.value);
 }
 
-function isLogicOrOperatorToken(candidate: object): candidate is OperatorToken {
-  return isOperatorToken(candidate) && candidate.value === ",";
+function isOrOperatorToken(candidate: object): candidate is OperatorToken {
+  return isOperatorToken(candidate) && isLogicOperator(candidate.value, OR);
 }
 
-function isLogicAndOperatorToken(candidate: object): candidate is OperatorToken {
-  return isOperatorToken(candidate) && candidate.value === ";";
+function isAndOperatorToken(candidate: object): candidate is OperatorToken {
+  return isOperatorToken(candidate) && isLogicOperator(candidate.value, AND);
 }
 
 function isEndToken(candidate: object): candidate is EndToken {
@@ -162,9 +151,9 @@ export {
   isOpenParenthesisToken,
   isCloseParenthesisToken,
   isOperatorToken,
-  isComparisionOperatorToken,
-  isLogicOrOperatorToken,
-  isLogicAndOperatorToken,
+  isComparisonOperatorToken,
+  isOrOperatorToken,
+  isAndOperatorToken,
   isEndToken,
   AnyToken,
   UnquotedToken,

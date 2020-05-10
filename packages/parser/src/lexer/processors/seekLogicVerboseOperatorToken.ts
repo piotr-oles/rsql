@@ -1,22 +1,16 @@
-import { mapToCanonicalLogicOperatorSymbol, VerboseLogicOperatorSymbol } from "@rsql/definitions";
+import { VerboseLogicOperators } from "@rsql/ast";
 import { SeekProcessor } from "../LexerProcessor";
 import { createOperatorToken, OperatorToken } from "../Token";
-import { createScanSymbol } from "./scanSymbol";
+import { createScanNonReservedSymbol } from "./scanNonReservedSymbol";
 
-// we need to add space after symbol to be sure that it doesn't match unquoted token with "and" or "or" prefix
-const scanLogicVerboseOperatorSymbol = createScanSymbol(["and ", "or "]);
+const scanLogicVerboseOperator = createScanNonReservedSymbol(VerboseLogicOperators);
 
 const seekLogicVerboseOperatorToken: SeekProcessor<OperatorToken> = (context) => {
-  const symbol = scanLogicVerboseOperatorSymbol(context);
+  const operator = scanLogicVerboseOperator(context);
 
-  if (symbol) {
-    const token = createOperatorToken(
-      // trim symbol from additional space and map to canonical
-      mapToCanonicalLogicOperatorSymbol(symbol.trim() as VerboseLogicOperatorSymbol),
-      context.position
-    );
-    // we can move position by untrimmed symbol as we don't care about space
-    context.position += symbol.length;
+  if (operator) {
+    const token = createOperatorToken(operator, context.position);
+    context.position += operator.length;
 
     return token;
   }

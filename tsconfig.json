@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "lib": ["es5", "scripthost"],
-    "moduleResolution": "node",
+    "target": "ES5",
+    "module": "ESNext",
+    "lib": ["ES5", "ScriptHost"],
+    "moduleResolution": "Node",
     "esModuleInterop": true,
     "importHelpers": false,
     "skipLibCheck": true,
@@ -11,19 +11,6 @@
     "strict": true,
     "baseUrl": ".",
     "composite": true,
-    "incremental": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
+    "declaration": true
   }
-  //  "include": ["packages"],
-  //  "exclude": ["node_modules", "lib"],
-  //  "files": []
-  //  "references": [
-  //    { "path": "./packages/ast" },
-  //    { "path": "./packages/builder" },
-  //    { "path": "./packages/definitions" },
-  //    { "path": "./packages/emitter" },
-  //    { "path": "./packages/parser" }
-  //  ]
 }

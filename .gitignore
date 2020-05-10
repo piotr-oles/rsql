@@ -86,6 +86,7 @@ $RECYCLE.BIN/
 
 # Artifacts
 lib
+dist
 coverage
 *.tsbuildinfo
 

@@ -1,6 +1,7 @@
-import { InvalidCharacterError } from "@rsql/definitions";
+import { createErrorForUnexpectedCharacter } from "../../Error";
 import { AnyToken } from "../Token";
-import seekComparisionOperatorToken from "./seekComparisionOperatorToken";
+import seekComparisonCustomOperatorToken from "./seekComparisonCustomOperatorToken";
+import seekComparisonOperatorToken from "./seekComparisonOperatorToken";
 import seekLogicCanonicalOperatorToken from "./seekLogicCanonicalOperatorToken";
 import seekLogicVerboseOperatorToken from "./seekLogicVerboseOperatorToken";
 import { SeekProcessor } from "../LexerProcessor";
@@ -10,12 +11,12 @@ import seekUnquotedToken from "./seekUnquotedToken";
 import skipWhitespace from "./skipWhitespace";
 
 const seekAnyToken: SeekProcessor<AnyToken> = (context) => {
+  // first skip all whitespace chars
+  skipWhitespace(context);
+
   if (context.position >= context.length) {
     return null;
   }
-
-  // first skip all whitespace chars
-  skipWhitespace(context);
 
   // then decide what to do based on the current char
   const char = context.buffer.charAt(context.position);
@@ -40,13 +41,16 @@ const seekAnyToken: SeekProcessor<AnyToken> = (context) => {
       token = seekLogicCanonicalOperatorToken(context);
       break;
 
-    // multi char symbols for comparision operator
+    // multi char symbols for comparison operator
     case "=":
     case "!":
     case "~":
     case "<":
     case ">":
-      token = seekComparisionOperatorToken(context);
+      token = seekComparisonOperatorToken(context);
+      if (!token && char === "=") {
+        token = seekComparisonCustomOperatorToken(context);
+      }
       break;
 
     // unreserved char
@@ -61,7 +65,7 @@ const seekAnyToken: SeekProcessor<AnyToken> = (context) => {
   }
 
   if (!token) {
-    throw InvalidCharacterError.createForUnexpectedCharacter(context.position, context.buffer);
+    throw createErrorForUnexpectedCharacter(context.position, context.buffer);
   }
 
   return token;

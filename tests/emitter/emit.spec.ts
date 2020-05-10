@@ -2,27 +2,17 @@ import { parse } from "@rsql/parser";
 import { emit } from "@rsql/emitter";
 
 describe("emit", () => {
-  it.each([
-    ["==", "=="],
-    ["!=", "!="],
-    ["<=", "<="],
-    [">=", ">="],
-    ["<", "<"],
-    [">", ">"],
-    ["=in=", "=in="],
-    ["=out=", "=out="],
-    ["=le=", "<="],
-    ["=ge=", ">="],
-    ["=lt=", "<"],
-    ["=gt=", ">"],
-  ])("emits comparision expression for operator %p", (operator, canonicalOperator) => {
-    const rsql = `selector${operator}value`;
-    const ast = parse(rsql);
-    const emittedRsql = emit(ast);
-    const expectedRsql = `selector${canonicalOperator}value`;
+  it.each(["==", "!=", "<=", ">=", "<", ">", "=in=", "=out=", "=le=", "=ge=", "=lt=", "=gt="])(
+    "emits comparison expression for operator %p",
+    (operator) => {
+      const rsql = `selector${operator}value`;
+      const ast = parse(rsql);
+      const emittedRsql = emit(ast);
+      const expectedRsql = `selector${operator}value`;
 
-    expect(emittedRsql).toEqual(expectedRsql);
-  });
+      expect(emittedRsql).toEqual(expectedRsql);
+    }
+  );
 
   it.each(["allons-y", "l00k.dot.path", "look/XML/path", "n:look/n:xml", "path.to::Ref", "$doll_r.way"])(
     'emits selector "%p"',
@@ -57,6 +47,7 @@ describe("emit", () => {
 
   it.each([
     ["(s0==a0,s1==a1);s2==a2", "(s0==a0,s1==a1);s2==a2"],
+    ["(s0==a0 or s1==a1) and s2==a2", "(s0==a0 or s1==a1) and s2==a2"],
     ["(s0==a0,s1=out=(a10,a11));s2==a2,s3==a3", "(s0==a0,s1=out=(a10,a11));s2==a2,s3==a3"],
     ["((s0==a0,s1==a1);s2==a2,s3==a3);s4==a4", "((s0==a0,s1==a1);s2==a2,s3==a3);s4==a4"],
     ["(s0==a0)", "s0==a0"],
@@ -66,5 +57,13 @@ describe("emit", () => {
     const emittedRsql = emit(ast);
 
     expect(emittedRsql).toEqual(expectedRsql);
+  });
+
+  it.each(["and", "or"])("emits query with verbose logic operators", (operator) => {
+    const rsql = `selector==value ${operator} selector>value`;
+    const ast = parse(rsql);
+    const emittedRsql = emit(ast);
+
+    expect(emittedRsql).toEqual(rsql);
   });
 });

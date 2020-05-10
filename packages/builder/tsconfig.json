@@ -3,10 +3,8 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
-    "outDir": "./lib",
-    "sourceRoot": "./src",
-    "baseUrl": "./src"
+    "outDir": "./lib"
   },
-  "references": [{ "path": "../ast" }, { "path": "../definitions" }, { "path": "../emitter" }, { "path": "../parser" }],
-  "exclude": ["node_modules", "lib"]
+  "references": [{ "path": "../ast" }],
+  "exclude": ["node_modules", "lib", "dist"]
 }
