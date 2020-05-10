@@ -11,7 +11,6 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap",
-    "clean": "lerna run --parallel clean",
     "build": "lerna run build",
     "release": "auto shipit -vv",
     "precommit": "lint-staged && yarn build && yarn test",
