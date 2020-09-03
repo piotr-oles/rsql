@@ -1,3 +1,19 @@
+# v1.0.1 (Thu Sep 03 2020)
+
+:tada: This release contains work from a new contributor! :tada:
+
+Thank you, null[@KirillGordineRhenag](https://github.com/KirillGordineRhenag), for all your work!
+
+#### 🐛 Bug Fix
+
+- bugfix: escape empty string [#9](https://github.com/piotr-oles/rsql/pull/9) ([@KirillGordineRhenag](https://github.com/KirillGordineRhenag))
+
+#### Authors: 1
+
+- [@KirillGordineRhenag](https://github.com/KirillGordineRhenag)
+
+---
+
 # v1.0.0 (Sun May 10 2020)
 
 #### 💥 Breaking Change
