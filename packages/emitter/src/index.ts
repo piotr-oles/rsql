@@ -44,6 +44,10 @@ function escapeQuotes(value: string, quote: string) {
 }
 
 function escapeValue(value: string, quote: '"' | "'" = '"') {
+  if (value === "") {
+    return quote + quote;
+  }
+
   if (ReservedChars.some((reservedChar) => value.includes(reservedChar))) {
     return `${quote}${escapeQuotes(value, quote)}${quote}`;
   }

@@ -45,6 +45,15 @@ describe("emit", () => {
     }
   );
 
+  test('Empty string will be emitted as ""', () => {
+    const rsql = `selector==""`;
+    const ast = parse(rsql);
+    const emittedRsql = emit(ast);
+    const expectedRsql = `selector==""`;
+
+    expect(emittedRsql).toEqual(expectedRsql);
+  })
+
   it.each([
     ["(s0==a0,s1==a1);s2==a2", "(s0==a0,s1==a1);s2==a2"],
     ["(s0==a0 or s1==a1) and s2==a2", "(s0==a0 or s1==a1) and s2==a2"],
