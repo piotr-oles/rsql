@@ -6,8 +6,6 @@
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "importHelpers": false,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
     "strict": true,
     "baseUrl": ".",
     "composite": true,

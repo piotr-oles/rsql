@@ -10,7 +10,7 @@
     "node": ">= 8"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap",
+    "postinstall": "lerna bootstrap && cd patches/dts-bundle && yarn",
     "build": "lerna run build",
     "release": "auto shipit",
     "precommit": "lint-staged && yarn build && yarn test",
@@ -55,7 +55,6 @@
     "@typescript-eslint/parser": "^2.27.0",
     "auto": "^9.26.8",
     "commitlint": "^8.3.5",
-    "dts-bundle": "^0.7.3",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-prettier": "^3.1.2",
