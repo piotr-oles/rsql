@@ -1,3 +1,15 @@
+# v1.0.2 (Thu Oct 08 2020)
+
+#### 🐛 Bug Fix
+
+- fix: use declare keyword in the .d.ts files [#10](https://github.com/piotr-oles/rsql/pull/10) ([@piotr-oles](https://github.com/piotr-oles))
+
+#### Authors: 1
+
+- Piotr Oleś ([@piotr-oles](https://github.com/piotr-oles))
+
+---
+
 # v1.0.0 (Sun May 10 2020)
 
 #### 💥 Breaking Change
