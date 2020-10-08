@@ -21,7 +21,7 @@
   "scripts": {
     "build:clean": "rm -rf ./lib && rm -f tsconfig.tsbuildinfo && rm -rf ./dist",
     "build:lib": "tsc -b tsconfig.json",
-    "build:dist": "rollup -c && dts-bundle --name \"@rsql/ast\" --main lib/index.d.ts --out ../dist/index.d.ts --outputAsModuleFolder && prettier --write ./dist",
+    "build:dist": "rollup -c && node ../../patches/dts-bundle/index.js --name \"@rsql/ast\" --main lib/index.d.ts --out ../dist/index.d.ts --outputAsModuleFolder && prettier --write ./dist",
     "build": "yarn build:clean && yarn build:lib && yarn build:dist"
   },
   "engines": {
