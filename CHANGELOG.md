@@ -1,3 +1,15 @@
+# v1.0.3 (Sat Jan 09 2021)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump ini from 1.3.5 to 1.3.8 [#12](https://github.com/piotr-oles/rsql/pull/12) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.0.2 (Thu Oct 08 2020)
 
 #### 🐛 Bug Fix
