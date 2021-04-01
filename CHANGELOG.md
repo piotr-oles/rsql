@@ -1,3 +1,21 @@
+# v1.0.4 (Thu Apr 01 2021)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump y18n from 4.0.0 to 4.0.1 [#16](https://github.com/piotr-oles/rsql/pull/16) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### ⚠️  Pushed to `master`
+
+- docs: add funding.yml ([@piotr-oles](https://github.com/piotr-oles))
+- docs: add issues templates ([@piotr-oles](https://github.com/piotr-oles))
+
+#### Authors: 2
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+- Piotr Oleś ([@piotr-oles](https://github.com/piotr-oles))
+
+---
+
 # v1.0.3 (Sat Jan 09 2021)
 
 #### 🐛 Bug Fix
