@@ -1,3 +1,15 @@
+# v1.0.5 (Sun May 02 2021)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump ssri from 6.0.1 to 6.0.2 [#17](https://github.com/piotr-oles/rsql/pull/17) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.0.4 (Thu Apr 01 2021)
 
 #### 🐛 Bug Fix
