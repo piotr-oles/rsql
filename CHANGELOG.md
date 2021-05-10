@@ -1,3 +1,15 @@
+# v1.1.0 (Mon May 10 2021)
+
+#### 🚀 Enhancement
+
+- chore(deps): bump handlebars from 4.5.3 to 4.7.7 [#18](https://github.com/piotr-oles/rsql/pull/18) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.0.5 (Sun May 02 2021)
 
 #### 🐛 Bug Fix
