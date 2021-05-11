@@ -1,3 +1,15 @@
+# v1.1.1 (Tue May 11 2021)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump hosted-git-info from 2.8.5 to 2.8.9 [#19](https://github.com/piotr-oles/rsql/pull/19) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.1.0 (Mon May 10 2021)
 
 #### 🚀 Enhancement
