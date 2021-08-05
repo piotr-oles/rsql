@@ -1,3 +1,15 @@
+# v1.2.1 (Thu Aug 05 2021)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump acorn from 6.3.0 to 6.4.2 [#22](https://github.com/piotr-oles/rsql/pull/22) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.2.0 (Thu Aug 05 2021)
 
 #### 🚀 Enhancement
