@@ -1,3 +1,19 @@
+# v1.2.0 (Thu Aug 05 2021)
+
+#### 🚀 Enhancement
+
+- chore(deps): bump ws from 7.2.3 to 7.4.6 [#20](https://github.com/piotr-oles/rsql/pull/20) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump tar from 4.4.13 to 4.4.15 [#21](https://github.com/piotr-oles/rsql/pull/21) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.1.1 (Tue May 11 2021)
 
 #### 🐛 Bug Fix
