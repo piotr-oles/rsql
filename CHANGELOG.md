@@ -1,3 +1,15 @@
+# v1.2.2 (Thu Aug 12 2021)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump path-parse from 1.0.6 to 1.0.7 [#23](https://github.com/piotr-oles/rsql/pull/23) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.2.1 (Thu Aug 05 2021)
 
 #### 🐛 Bug Fix
