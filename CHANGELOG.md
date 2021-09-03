@@ -1,3 +1,15 @@
+# v1.2.3 (Fri Sep 03 2021)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump tar from 4.4.15 to 4.4.19 [#24](https://github.com/piotr-oles/rsql/pull/24) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.2.2 (Thu Aug 12 2021)
 
 #### 🐛 Bug Fix
