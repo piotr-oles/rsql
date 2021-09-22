@@ -1,3 +1,15 @@
+# v1.2.4 (Wed Sep 22 2021)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump tmpl from 1.0.4 to 1.0.5 [#25](https://github.com/piotr-oles/rsql/pull/25) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.2.3 (Fri Sep 03 2021)
 
 #### 🐛 Bug Fix
