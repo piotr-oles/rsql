@@ -1,3 +1,15 @@
+# v1.3.1 (Sun Feb 13 2022)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump trim-off-newlines from 1.0.1 to 1.0.3 [#29](https://github.com/piotr-oles/rsql/pull/29) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.3.0 (Sun Feb 13 2022)
 
 #### 🚀 Enhancement
