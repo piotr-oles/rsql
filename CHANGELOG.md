@@ -1,3 +1,15 @@
+# v1.3.0 (Sun Feb 13 2022)
+
+#### 🚀 Enhancement
+
+- chore(deps): bump ajv from 6.10.2 to 6.12.6 [#28](https://github.com/piotr-oles/rsql/pull/28) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.2.4 (Wed Sep 22 2021)
 
 #### 🐛 Bug Fix
