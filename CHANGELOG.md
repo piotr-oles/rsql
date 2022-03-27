@@ -1,3 +1,15 @@
+# v1.3.2 (Sun Mar 27 2022)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump minimist from 1.2.5 to 1.2.6 [#31](https://github.com/piotr-oles/rsql/pull/31) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.3.1 (Sun Feb 13 2022)
 
 #### 🐛 Bug Fix
