@@ -14,36 +14,18 @@ import {
   ValueNode,
 } from "@rsql/ast";
 
-function escapeQuotes(value: string, quote: string) {
-  let escapedValue = value;
-  let previousPosition = 0;
-  let currentPosition = value.indexOf(quote);
+type Quote = '"' | "'";
 
-  while (currentPosition !== -1) {
-    // scan back for escape characters
-    let escaped = false;
-    for (
-      let scanPosition = currentPosition - 1;
-      escapedValue[scanPosition] === "\\" && scanPosition > previousPosition;
-      scanPosition--
-    ) {
-      escaped = !escaped;
-    }
+const NEEDS_ESCAPING: { [Q in Quote]: RegExp } = {
+  '"': /"|\\/g,
+  "'": /'|\\/g,
+};
 
-    // if it's not escaped - add backslash
-    if (!escaped) {
-      escapedValue = escapedValue.slice(0, currentPosition - 1) + "\\" + escapedValue.slice(currentPosition);
-    }
-
-    // move position forward
-    previousPosition = currentPosition;
-    currentPosition = value.indexOf(quote, previousPosition + 1);
-  }
-
-  return escapedValue;
+function escapeQuotes(value: string, quote: Quote) {
+  return value.replace(NEEDS_ESCAPING[quote], "\\$&");
 }
 
-function escapeValue(value: string, quote: '"' | "'" = '"') {
+function escapeValue(value: string, quote: Quote) {
   if (value === "") {
     return quote + quote;
   }
@@ -59,7 +41,7 @@ function emitSelector(node: SelectorNode) {
   return node.selector;
 }
 
-function emitValue(node: ValueNode, quote: '"' | "'" = '"') {
+function emitValue(node: ValueNode, quote: Quote = '"') {
   return Array.isArray(node.value)
     ? `(${node.value.map((value) => escapeValue(value, quote)).join(",")})`
     : escapeValue(node.value, quote);

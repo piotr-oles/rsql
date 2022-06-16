@@ -153,17 +153,21 @@ describe("parse", () => {
   );
 
   it.each([
-    "'10\\' 15\"'",
-    "'10\\' 15\\\"'",
-    "'w\\\\ \\'Flyn\\n\\''",
-    "'\\\\(^_^)/'",
-    "'\\\\'",
-    '"10\' 15\\""',
-    '"10\\\' 15\\""',
-    '"w\\\\ \\"Flyn\\n\\""',
-    '"\\\\(^_^)/"',
-    '"\\\\"',
-  ])('parses escaped quoted value "%p"', (value) => {
+    ["'10\\' 15\"'", "10' 15\""],
+    ["'10\\' 15\\\"'", "10' 15\""],
+    ["'10\\'\\\n15\\\"'", "10'\n15\""],
+    ["'w\\\\ \\'Flyn\\n\\''", "w\\ 'Flynn'"],
+    ["'\\\\(^_^)/'", "\\(^_^)/"],
+    ["'\\\\'", "\\"],
+    ["'\\\u2081\\''", "\u2081'"],
+    ['"10\' 15\\""', "10' 15\""],
+    ['"10\\\' 15\\""', "10' 15\""],
+    ['"10\\\'\\\n15\\""', "10'\n15\""],
+    ['"w\\\\ \\"Flyn\\n\\""', 'w\\ "Flynn"'],
+    ['"\\\\(^_^)/"', "\\(^_^)/"],
+    ['"\\\\"', "\\"],
+    ['"\\\u2081\\\'"', "\u2081'"],
+  ])('parses escaped quoted value "%p"', (value, unescapedValue) => {
     const rsql = `selector==${value}`;
     const comparison = parse(rsql);
 
@@ -173,7 +177,7 @@ describe("parse", () => {
 
     expect(comparison.operator).toEqual("==");
     expect(comparison.left.selector).toEqual("selector");
-    expect(comparison.right.value).toEqual(value.slice(1, -1));
+    expect(comparison.right.value).toEqual(unescapedValue);
   });
 
   it.each([
@@ -187,6 +191,10 @@ describe("parse", () => {
     ],
     [["meh"], ["meh"]],
     [['")o("'], [")o("]],
+    [
+      ['"So I said, \\"We need more commas!\\""', '",,,,,,,"'],
+      ['So I said, "We need more commas!"', ",,,,,,,"],
+    ],
   ])('parses values group "%p"', (values, expectedValues) => {
     const rsql = `selector=in=(${values.join(",")})`;
     const comparison = parse(rsql);
