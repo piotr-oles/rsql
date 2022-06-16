@@ -1,3 +1,4 @@
+import builder from "@rsql/builder";
 import { parse } from "@rsql/parser";
 import { emit } from "@rsql/emitter";
 
@@ -33,17 +34,23 @@ describe("emit", () => {
     expect(emittedRsql).toEqual(rsql);
   });
 
-  it.each(['"hi there!"', '"hi \\"there!"', "'Pěkný den!'", '"Flynn\'s *"', "\"o)'O'(o\"", '"6*7=42"'])(
-    'emits quoted value with any chars "%p"',
-    (value) => {
-      const rsql = `selector==${value}`;
-      const ast = parse(rsql);
-      const emittedRsql = emit(ast);
-      const expectedRsql = `selector=="${value.slice(1, -1)}"`;
+  it.each([
+    ["hi there!", '"hi there!"'],
+    ['hi "there\\!', '"hi \\"there\\\\!"'],
+    ["Pěkný den!", '"Pěkný den!"'],
+    ["Flynn's *", '"Flynn\'s *"'],
+    ["o)'O'(o", "\"o)'O'(o\""],
+    ["6*7=42", '"6*7=42"'],
+  ])('emits quoted value with any chars "%p"', (value, escapedValue) => {
+    const ast = builder.comparison("selector", "==", value);
+    const emittedRsql = emit(ast);
+    const expectedRsql = `selector==${escapedValue}`;
 
-      expect(emittedRsql).toEqual(expectedRsql);
-    }
-  );
+    expect(emittedRsql).toEqual(expectedRsql);
+
+    const parsedAst = parse(emittedRsql);
+    expect(parsedAst).toEqual(ast);
+  });
 
   test('Empty string will be emitted as ""', () => {
     const rsql = `selector==""`;
@@ -52,7 +59,7 @@ describe("emit", () => {
     const expectedRsql = `selector==""`;
 
     expect(emittedRsql).toEqual(expectedRsql);
-  })
+  });
 
   it.each([
     ["(s0==a0,s1==a1);s2==a2", "(s0==a0,s1==a1);s2==a2"],

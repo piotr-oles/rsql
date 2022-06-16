@@ -33,7 +33,7 @@ const selectorProduction: ParserProduction = (stack) => {
 
 const singleValueProduction: ParserProduction = (stack) => {
   const token = stack[stack.length - 1] as UnquotedToken | QuotedToken;
-  const value = isQuotedToken(token) ? token.value.slice(1, -1) : token.value;
+  const value = resolveValueTokenValue(token);
 
   return {
     consumed: 1,
@@ -51,12 +51,14 @@ const multiValueProduction: ParserProduction = (stack) => {
 
   return {
     consumed: closeParenthesisIndex - openParenthesisIndex + 1,
-    produced: createValueNode(
-      valueTokens.map((valueToken) => (isQuotedToken(valueToken) ? valueToken.value.slice(1, -1) : valueToken.value)),
-      true
-    ),
+    produced: createValueNode(valueTokens.map(resolveValueTokenValue), true),
   };
 };
+
+const ESCAPE_SEQUENCE = /\\([\s\S])/g;
+
+const resolveValueTokenValue = (valueToken: UnquotedToken | QuotedToken) =>
+  isQuotedToken(valueToken) ? valueToken.value.slice(1, -1).replace(ESCAPE_SEQUENCE, "$1") : valueToken.value;
 
 const comparisonExpressionProduction: ParserProduction = (stack) => {
   const selector = stack[stack.length - 3] as SelectorNode;
