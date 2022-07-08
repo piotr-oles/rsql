@@ -1,3 +1,16 @@
+# v1.4.0 (Fri Jul 08 2022)
+
+#### 🚀 Enhancement
+
+- feat: allow customizing quoting behavior of emit (#34) [#35](https://github.com/piotr-oles/rsql/pull/35) (tim.hambourger@concretedata.com [@TimHambourger](https://github.com/TimHambourger))
+
+#### Authors: 2
+
+- [@TimHambourger](https://github.com/TimHambourger)
+- Tim Hambourger (tim.hambourger@concretedata.com)
+
+---
+
 # v1.0.2 (Thu Oct 08 2020)
 
 #### 🐛 Bug Fix
