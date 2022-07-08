@@ -4,7 +4,7 @@
   "repository": "https://github.com/piotr-oles/rsql.git",
   "license": "MIT",
   "author": "Piotr Oleś <piotrek.oles@gmail.com>",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "sideEffects": false,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,7 +28,7 @@
     "node": ">= 8"
   },
   "dependencies": {
-    "@rsql/ast": "^1.3.3"
+    "@rsql/ast": "^1.4.0"
   },
   "jest": {
     "preset": "ts-jest",
