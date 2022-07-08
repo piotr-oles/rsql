@@ -36,7 +36,7 @@ describe("emit", () => {
 
   it.each([
     ["hi there!", '"hi there!"'],
-    ['hi "there\\!', '"hi \\"there\\\\!"'],
+    ['hi "there\\!', "'hi \"there\\\\!'"],
     ["Pěkný den!", '"Pěkný den!"'],
     ["Flynn's *", '"Flynn\'s *"'],
     ["o)'O'(o", "\"o)'O'(o\""],
@@ -44,6 +44,26 @@ describe("emit", () => {
   ])('emits quoted value with any chars "%p"', (value, escapedValue) => {
     const ast = builder.comparison("selector", "==", value);
     const emittedRsql = emit(ast);
+    const expectedRsql = `selector==${escapedValue}`;
+
+    expect(emittedRsql).toEqual(expectedRsql);
+
+    const parsedAst = parse(emittedRsql);
+    expect(parsedAst).toEqual(ast);
+  });
+
+  it.each([
+    ['hi "there!', { preferredQuote: '"' as const, optimizeQuotes: true }, "'hi \"there!'"],
+    ['hi "there!', { preferredQuote: "'" as const, optimizeQuotes: true }, "'hi \"there!'"],
+    ['hi "there!', { preferredQuote: '"' as const, optimizeQuotes: false }, '"hi \\"there!"'],
+    ['hi "there!', { preferredQuote: "'" as const, optimizeQuotes: false }, "'hi \"there!'"],
+    ["hi 'there!", { preferredQuote: '"' as const, optimizeQuotes: true }, '"hi \'there!"'],
+    ["hi 'there!", { preferredQuote: "'" as const, optimizeQuotes: true }, '"hi \'there!"'],
+    ["hi 'there!", { preferredQuote: '"' as const, optimizeQuotes: false }, '"hi \'there!"'],
+    ["hi 'there!", { preferredQuote: "'" as const, optimizeQuotes: false }, "'hi \\'there!'"],
+  ])('honors provided emit options "%p"', (value, opts, escapedValue) => {
+    const ast = builder.comparison("selector", "==", value);
+    const emittedRsql = emit(ast, opts);
     const expectedRsql = `selector==${escapedValue}`;
 
     expect(emittedRsql).toEqual(expectedRsql);
