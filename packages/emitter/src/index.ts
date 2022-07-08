@@ -70,9 +70,9 @@ function selectQuote(
   }
 }
 
-function escapeValue(value: string, opts: EmitOptions) {
+function escapeValue(value: string, options: EmitOptions) {
   if (value === "" || ReservedChars.some((reservedChar) => value.includes(reservedChar))) {
-    const quote = selectQuote(value, opts);
+    const quote = selectQuote(value, options);
     return `${quote}${escapeQuotes(value, quote)}${quote}`;
   }
 
@@ -83,19 +83,19 @@ function emitSelector(node: SelectorNode) {
   return node.selector;
 }
 
-function emitValue(node: ValueNode, opts: EmitOptions) {
+function emitValue(node: ValueNode, options: EmitOptions) {
   return Array.isArray(node.value)
-    ? `(${node.value.map((value) => escapeValue(value, opts)).join(",")})`
-    : escapeValue(node.value, opts);
+    ? `(${node.value.map((value) => escapeValue(value, options)).join(",")})`
+    : escapeValue(node.value, options);
 }
 
-function emitComparison(node: ComparisonNode, opts: EmitOptions) {
-  return `${emitSelector(node.left)}${node.operator}${emitValue(node.right, opts)}`;
+function emitComparison(node: ComparisonNode, options: EmitOptions) {
+  return `${emitSelector(node.left)}${node.operator}${emitValue(node.right, options)}`;
 }
 
-function emitLogic(node: LogicNode, opts: EmitOptions) {
-  let left = emitWithoutOptsValidation(node.left, opts);
-  let right = emitWithoutOptsValidation(node.right, opts);
+function emitLogic(node: LogicNode, options: EmitOptions) {
+  let left = emitWithoutOptionsValidation(node.left, options);
+  let right = emitWithoutOptionsValidation(node.right, options);
 
   // handle operator precedence - as it's only the case for AND operator, we don't need a generic logic for that
   if (isLogicOperator(node.operator, AND)) {
@@ -113,23 +113,23 @@ function emitLogic(node: LogicNode, opts: EmitOptions) {
   return `${left}${operator}${right}`;
 }
 
-function emitWithoutOptsValidation(expression: ExpressionNode, opts: EmitOptions): string {
+function emitWithoutOptionsValidation(expression: ExpressionNode, options: EmitOptions): string {
   if (isComparisonNode(expression)) {
-    return emitComparison(expression, opts);
+    return emitComparison(expression, options);
   } else if (isLogicNode(expression)) {
-    return emitLogic(expression, opts);
+    return emitLogic(expression, options);
   }
 
   throw new TypeError(`The "expression" has to be a valid "ExpressionNode", ${String(expression)} passed.`);
 }
 
-function emit(expression: ExpressionNode, opts: EmitOptions = {}) {
-  if (opts.preferredQuote !== undefined && opts.preferredQuote !== '"' && opts.preferredQuote !== "'") {
+function emit(expression: ExpressionNode, options: EmitOptions = {}) {
+  if (options.preferredQuote !== undefined && options.preferredQuote !== '"' && options.preferredQuote !== "'") {
     throw new TypeError(
-      `Invalid "preferredQuote" option: ${opts.preferredQuote}. Must be either " (the ASCII double quote character) or ' (the ASCII single quote character).`
+      `Invalid "preferredQuote" option: ${options.preferredQuote}. Must be either " (the ASCII double quote character) or ' (the ASCII single quote character).`
     );
   }
-  return emitWithoutOptsValidation(expression, opts);
+  return emitWithoutOptionsValidation(expression, options);
 }
 
 export { emit, EmitOptions, Quote };
