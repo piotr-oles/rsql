@@ -45,13 +45,14 @@ function escapeQuotes(value: string, quote: Quote) {
   return value.replace(NEEDS_ESCAPING[quote], "\\$&");
 }
 
-const QUOTE_COUNTER: { [Q in Quote]: RegExp } = {
-  '"': /"/g,
-  "'": /'/g,
-};
-
 function countQuote(value: string, quote: Quote) {
-  return value.match(QUOTE_COUNTER[quote])?.length ?? 0;
+  let count = 0;
+  for (let i = 0; i < value.length; ++i) {
+    if (value[i] === quote) {
+      count++;
+    }
+  }
+  return count;
 }
 
 function selectQuote(
