@@ -1,3 +1,15 @@
+# v1.4.1 (Mon Dec 05 2022)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump decode-uri-component from 0.2.0 to 0.2.2 [#36](https://github.com/piotr-oles/rsql/pull/36) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.4.0 (Fri Jul 08 2022)
 
 #### 🚀 Enhancement
