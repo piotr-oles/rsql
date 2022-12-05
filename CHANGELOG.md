@@ -1,3 +1,15 @@
+# v1.5.0 (Mon Dec 05 2022)
+
+#### 🚀 Enhancement
+
+- chore(deps): bump minimatch from 3.0.4 to 3.1.2 [#37](https://github.com/piotr-oles/rsql/pull/37) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.4.1 (Mon Dec 05 2022)
 
 #### 🐛 Bug Fix
