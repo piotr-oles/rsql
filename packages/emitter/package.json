@@ -4,7 +4,7 @@
   "repository": "https://github.com/piotr-oles/rsql.git",
   "license": "MIT",
   "author": "Piotr Oleś <piotrek.oles@gmail.com>",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "sideEffects": false,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,7 +28,7 @@
     "node": ">= 8"
   },
   "dependencies": {
-    "@rsql/ast": "^1.5.0"
+    "@rsql/ast": "^1.5.1"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
