@@ -1,3 +1,15 @@
+# v1.5.1 (Sun Jan 08 2023)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump json5 from 2.1.1 to 2.2.3 [#39](https://github.com/piotr-oles/rsql/pull/39) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.5.0 (Mon Dec 05 2022)
 
 #### 🚀 Enhancement
