@@ -1,3 +1,15 @@
+# v1.5.2 (Mon Jan 16 2023)
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump qs from 6.5.2 to 6.5.3 [#38](https://github.com/piotr-oles/rsql/pull/38) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.5.1 (Sun Jan 08 2023)
 
 #### 🐛 Bug Fix
