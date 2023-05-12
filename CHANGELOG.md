@@ -1,3 +1,19 @@
+# v1.6.0 (Fri May 12 2023)
+
+#### 🚀 Enhancement
+
+- chore(deps): bump minimatch from 3.0.4 to 3.1.2 in /patches/dts-bundle [#43](https://github.com/piotr-oles/rsql/pull/43) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### 🐛 Bug Fix
+
+- chore(deps): bump thenify from 3.3.0 to 3.3.1 [#42](https://github.com/piotr-oles/rsql/pull/42) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v1.5.2 (Mon Jan 16 2023)
 
 #### 🐛 Bug Fix
